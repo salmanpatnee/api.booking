@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProductResource extends JsonResource
+class EmployeeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,15 +17,11 @@ class ProductResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'category' => $this->category->name,
-            'barcode' => $this->barcode,
-            // 'sku' => $this->whenNotNull($this->sku),
             'name' => $this->name,
-            'quantity' => $this->quantity,
-
-            'default_purchase_price' => $this->whenNotNull($this->default_purchase_price),
-            'default_selling_price' => $this->whenNotNull($this->default_selling_price),
-
+            'email' => $this->email,
+            'phone' => $this->when(!is_null($this->phone), $this->phone),
+            'address' => $this->when(!is_null($this->address), $this->address),
+            'joining_date' => $this->when(!is_null($this->joining_date), (new Carbon($this->joining_date))->format('Y-m-d'))
         ];
     }
 }

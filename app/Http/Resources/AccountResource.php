@@ -19,7 +19,7 @@ class AccountResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
-            'company' => $this->company,
+            'trader' => $this->trader,
             'account_type' => $this->account_type,
             'balance' => $this->balance,
             'purchases_amount' => $this->when($this->account_type === 'supplier', $this->purchases_amount),

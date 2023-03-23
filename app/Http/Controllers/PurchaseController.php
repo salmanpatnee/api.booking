@@ -108,16 +108,16 @@ class PurchaseController extends Controller
                 $requestPurchaseDetail['price'],
                 $requestPurchaseDetail['quantity'],
                 $purchaseDetailAmount,
-                $requestPurchaseDetail['quantity_boxes'],
-                $requestPurchaseDetail['units_in_box'],
-                $requestPurchaseDetail['quantity_strips'],
-                $requestPurchaseDetail['units_in_strip'],
-                $requestPurchaseDetail['quantity_units'],
+                null,
+                null,
+                null,
+                null,
+                null,
                 $requestPurchaseDetail['sale_price'],
-                $expiryDate,
+                null,
                 totalSalePrice: $requestPurchaseDetail['total_sale_price'],
-                uomOfBoxes: $requestPurchaseDetail['units_in_box'],
-                boxSalePrice: $requestPurchaseDetail['box_sale_price'],
+                uomOfBoxes: 0,
+                boxSalePrice: 0.00,
             );
 
             $purchaseOrderDetailsQuantitySent[$requestPurchaseDetail['product_id']] = $requestPurchaseDetail['quantity'];
@@ -330,7 +330,7 @@ class PurchaseController extends Controller
             'purchaseDetails' => function ($q) {
                 $q->select('id', 'purchase_id', 'product_id', 'price', 'quantity', 'amount', 'expiry_date', 'sale_price', 'profit_margin', 'units_in_box')
                     ->with(['product' => function ($q) {
-                        $q->select('id', 'name', 'uom_of_boxes');
+                        $q->select('id', 'name');
                     }]);
             }
         ]);
@@ -346,7 +346,6 @@ class PurchaseController extends Controller
      */
     public function update(Request $request, Purchase $purchase)
     {
-        
     }
 
     /**

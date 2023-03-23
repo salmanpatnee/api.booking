@@ -25,7 +25,7 @@ class Account extends Model
             $query->where('name', 'like', $term)
                 ->orWhere('email', 'like', $term)
                 ->orWhere('phone', 'like', $term)
-                ->orWhere('company', 'like', $term);
+                ->orWhere('trader', 'like', $term);
         });
     }
 

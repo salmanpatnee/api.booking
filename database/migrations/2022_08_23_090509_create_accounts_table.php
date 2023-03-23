@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
-            $table->string('company')->nullable();
+            $table->string('trader')->nullable();
+            $table->string("address", 1024)->nullable();
             $table->double('balance');
             $table->enum('account_type', ['supplier', 'customer', 'both']);
 
@@ -29,9 +30,6 @@ return new class extends Migration
             /* for customer */
             $table->unsignedDecimal('sales_amount', 16, 2)->nullable()->default(0.00);
             $table->unsignedInteger('sales_count')->nullable();
-
-            $table->string("address", 1024)->nullable();
-            $table->unsignedInteger("ref_id")->nullable();//old database reference id
 
             $table->timestamps();
             $table->softDeletes();

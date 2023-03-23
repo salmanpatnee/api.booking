@@ -22,7 +22,7 @@ class StorePurchaseRequest extends FormRequest
      * @return array<string, mixed>
      */
     public function rules()
-    {        
+    {
         return [
             'date' => 'required|date',
             'account_id' => 'required|exists:accounts,id',
@@ -39,7 +39,7 @@ class StorePurchaseRequest extends FormRequest
 
             'status' => 'required|in:draft,ordered,received',
 
-            'purchase_details'=>'required|array',
+            'purchase_details' => 'required|array',
             'purchase_details.*.product_id' => 'required|exists:products,id',
             'purchase_details.*.price' => 'required|numeric',
             'purchase_details.*.quantity' => 'required|numeric',
@@ -51,7 +51,7 @@ class StorePurchaseRequest extends FormRequest
             'purchase_details.*.units_in_strip' => 'nullable|numeric',
             // 'purchase_details.*.sale_price_strip' => 'nullable|numeric',
             'purchase_details.*.sale_price' => 'required|numeric|gt:purchase_details.*.price',
-            'purchase_details.*.expiry_date' => 'required|date|after_or_equal:'.now()->addMonths(1)->format("Y-m-d"),
+            // 'purchase_details.*.expiry_date' => 'required|date|after_or_equal:'.now()->addMonths(1)->format("Y-m-d"),
         ];
     }
 }

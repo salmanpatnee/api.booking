@@ -19,6 +19,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DaySummaryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\DummyPurchaseController;
+use App\Http\Controllers\EmployeesController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ExpenseTypeController;
 use App\Http\Controllers\FixPurchasePriceController;
@@ -74,6 +75,12 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth:sanctum')
     ->name('logout');
 
+Route::get('products/export', [ProductController::class, 'export']);
+Route::get('products/import', [ProductController::class, 'import']);
+Route::post('products/excel-import', [ProductController::class, 'excelImport']);
+Route::get('products/fix-quantity', [ProductController::class, 'fixQuantity']);
+Route::get('products/fix-purchase-price', FixPurchasePriceController::class);
+Route::apiResource('products', ProductController::class);
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -93,12 +100,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('brands/import', [BrandController::class, 'import']);
     Route::apiResource('brands', BrandController::class);
 
-    Route::get('products/export', [ProductController::class, 'export']);
-    Route::get('products/import', [ProductController::class, 'import']);
-    Route::post('products/excel-import', [ProductController::class, 'excelImport']);
-    Route::get('products/fix-quantity', [ProductController::class, 'fixQuantity']);
-    Route::get('products/fix-purchase-price', FixPurchasePriceController::class);
-    Route::apiResource('products', ProductController::class);
+    // Route::get('products/export', [ProductController::class, 'export']);
+    // Route::get('products/import', [ProductController::class, 'import']);
+    // Route::post('products/excel-import', [ProductController::class, 'excelImport']);
+    // Route::get('products/fix-quantity', [ProductController::class, 'fixQuantity']);
+    // Route::get('products/fix-purchase-price', FixPurchasePriceController::class);
+    // Route::apiResource('products', ProductController::class);
 
     Route::get('purchases/import', [PurchaseController::class, 'import']);
     Route::put('purchases/{purchase}/update-supplier', PurchaseUpdateSupplierController::class);
@@ -123,8 +130,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('suppliers', SupplierController::class)->except(['destroy']);
 
     Route::get('customers/export', [CustomerController::class, 'export']);
-    Route::get('customers/import', [CustomerController::class, 'import']);
     Route::apiResource('customers', CustomerController::class)->except(['destroy']);
+
+    Route::apiResource('employees', EmployeesController::class);
 
     Route::get('sales-returns/export', [SalesReturnController::class, 'export']);
     Route::get('sales-returns/import', [SalesReturnController::class, 'import']);

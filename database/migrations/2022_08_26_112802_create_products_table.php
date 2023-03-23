@@ -16,44 +16,29 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained();
-            $table->foreignId('brand_id')->nullable()->constrained();
 
             $table->string('name');
             $table->unsignedInteger('quantity')->default(0);
 
             $table->string('barcode')->unique();
-            $table->string('sku')->nullable()->unique();
-            $table->string('image')->nullable();
-
-            $table->unsignedInteger('uom_of_boxes')->nullable();
-            $table->unsignedInteger('uom_of_strips')->nullable();
-
             $table->text('description')->nullable();
 
             $table->unsignedDecimal('vat_amount')->nullable();
 
             $table->unsignedInteger('quantity_sold')->default(0);
 
-            $table->unsignedInteger('quantity_threshold')->nullable();
 
             $table->double('default_purchase_price')->nullable();
             $table->double('default_selling_price')->nullable();
 
             $table->double('default_selling_price_old')->nullable();
 
-            /* Discount module */
-            $table->decimal('discount_rate_cash')->nullable();
-            $table->decimal('discount_rate_card')->nullable();
-            $table->decimal('discount_rate_shipment')->nullable();
-            $table->boolean('is_locked')->default(true);
-            
+
             $table->boolean('is_active')->default(true);
 
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
 
-            $table->string("ref_id", 100)->nullable();//old database reference id
-            $table->dateTime("discount_assigned_at")->nullable();
 
             $table->timestamps();
             $table->softDeletes();

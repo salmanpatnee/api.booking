@@ -10,13 +10,6 @@ class Product extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $casts = [
-        'is_locked' => 'boolean',
-        'discount_rate_cash' => 'double',
-        'discount_rate_card' => 'double',
-        'discount_rate_shipment' => 'double',
-        'default_box_sale_price' => 'double',
-    ];
 
     protected $guarded = ['id'];
 
@@ -25,10 +18,6 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function brand()
-    {
-        return $this->belongsTo(Brand::class);
-    }
 
     public function productInventoryEntries()
     {

@@ -9,6 +9,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Facades\Excel;
@@ -31,36 +32,33 @@ class ProductController extends Controller
 
 
         if ($request->for == 'purchases.create') {
-            $products = Product::select('id', 'name', 'quantity', 'default_purchase_price', 'default_selling_price', 'barcode', 'uom_of_boxes', 'uom_of_strips', 'default_box_sale_price')
+            $products = Product::select('id', 'name', 'quantity', 'default_purchase_price', 'default_selling_price', 'barcode')
                 ->where('name', 'like', "%{$request->search}%")
                 ->with([
                     'category' => function ($q) {
                         $q->select('id', 'name');
                     },
-                    'brand' => function ($q) {
-                        $q->select('id', 'name');
-                    },
                 ]);
-            $products = $products->limit(27)->get();
-            return response()->json(['data' => $products]);
+            // $products = $products->limit(27)->get();
+            // return response()->json(['data' => $products]);
         }
 
-        if ($request->for == 'purchase-orders.create') {
-            $products = Product::select('id', 'name', 'quantity', 'quantity_threshold');
-            if (!empty($request->alerted))
-                $products->where('quantity', '<=', 'quantity_threshold');
-            $products = $products->limit(10)->get();
-            return $products;
-        }
+        // if ($request->for == 'purchase-orders.create') {
+        //     $products = Product::select('id', 'name', 'quantity', 'quantity_threshold');
+        //     if (!empty($request->alerted))
+        //         $products->where('quantity', '<=', 'quantity_threshold');
+        //     $products = $products->limit(10)->get();
+        //     return $products;
+        // }
 
-        if ($request->for == 'products.discount') {
+        // if ($request->for == 'products.discount') {
 
-            $category_id  = request('category', '');
+        //     $category_id  = request('category', '');
 
-            $products = Product::where('category_id', $category_id)->get();
+        //     $products = Product::where('category_id', $category_id)->get();
 
-            return ProductResource::collection($products);
-        }
+        //     return ProductResource::collection($products);
+        // }
 
         if ($request->for == 'sales.create') {
 
@@ -101,13 +99,10 @@ class ProductController extends Controller
             $products = Product::select('id', 'name', 'quantity')
                 ->where('quantity', '<=', $request->quantity)->orderBy($orderBy, $sortOrder)->paginate($paginate);
 
-           
-            return response()->json(['data' => $products]);
 
+            return response()->json(['data' => $products]);
         }
 
-
-       
         $products = Product::search($term)->orderBy($orderBy, $sortOrder)->paginate($paginate);
 
         return ProductResource::collection($products);
@@ -121,26 +116,22 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $userId = auth()->user()->id;
+
+        // $userId = auth()->user()->id;
+        $userId = 1;
         $attributes = $request->validate([
             'name' => 'required|string|unique:products,name',
             'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'nullable|exists:brands,id',
+
             'quantity' =>  'nullable',
             'barcode' => 'required|unique:products,barcode',
-            'sku' => 'nullable|unique:products,sku',
-            'image' => 'nullable',
-            'uom_of_boxes' => 'nullable',
-            'uom_of_strips' => 'nullable',
+
             'description' => 'nullable',
-            'vat_amount' => 'nullable',
-            'quantity_threshold' => 'nullable|numeric',
+
             'default_purchase_price' => 'nullable|numeric',
             'default_selling_price' => 'nullable|numeric',
             'is_active' => 'required|boolean',
-            'discount_rate_cash' => 'nullable|numeric',
-            'discount_rate_card' => 'nullable|numeric',
-            'discount_rate_shipment' => 'nullable|numeric',
+
         ]);
 
         $attributes['created_by'] =  $userId;
@@ -181,9 +172,7 @@ class ProductController extends Controller
             'category' => function ($q) {
                 $q->select('id', 'name');
             },
-            'brand' => function ($q) {
-                $q->select('id', 'name');
-            },
+
             'productInventoryEntries' => function ($q) {
                 $q->select('id', 'product_id', 'location_id', 'purchased_price', 'initial_quantity', 'available_quantity', 'sold_quantity', 'transferred_quantity', 'adjusted_quantity', 'expiry_date')
                     ->whereNotNull('purchased_price')
@@ -226,22 +215,16 @@ class ProductController extends Controller
         $attributes = $request->validate([
             'name' => ['required', 'string', Rule::unique('products', 'name')->ignore($product->id)],
             'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'nullable|exists:brands,id',
+
             'quantity' =>  'nullable',
             'barcode' => ['required', Rule::unique('products', 'barcode')->ignore($product->id)],
-            'sku' => ['nullable', Rule::unique('products', 'sku')->ignore($product->id)],
-            'image' => 'nullable',
-            'uom_of_boxes' => 'nullable',
-            'uom_of_strips' => 'nullable',
+
             'description' => 'nullable',
-            'vat_amount' => 'nullable',
-            'quantity_threshold' => 'nullable|numeric',
+
             'default_purchase_price' => 'nullable|numeric',
             'default_selling_price' => 'nullable|numeric',
             'is_active' => 'required|boolean',
-            'discount_rate_cash' => 'nullable|numeric',
-            'discount_rate_card' => 'nullable|numeric',
-            'discount_rate_shipment' => 'nullable|numeric',
+
         ]);
 
         DB::beginTransaction();
@@ -279,82 +262,81 @@ class ProductController extends Controller
         //
     }
 
-    public function export()
-    {
-        // return (new ProductsExport($students));
+    // public function export()
+    // {
+    //     // return (new ProductsExport($students));
+    //     return Excel::download(new ProductsExport, 'products.xlsx');
+    // }
 
-        return Excel::download(new ProductsExport, 'products.xlsx');
-    }
+    // public function import()
+    // {
+    //     DB::connection("mysql2")->table("product_information")
+    //         ->select("id", "barcode", "product_id", "category_id", "product_name", "price", "cash_discount_rate", "card_discount_rate", "delivery_discount_rate", "discount_locked", "discount_assigned_at", "low_stock_threshold", "product_model", "status")
+    //         // ->where("status", 1)
+    //         ->orderBy('id')->chunk(500, function ($oldProducts) {
+    //             foreach ($oldProducts as $oldProduct) {
+    //                 $product = Product::where('ref_id', $oldProduct->product_id)
+    //                     ->first();
 
-    public function import()
-    {
-        DB::connection("mysql2")->table("product_information")
-            ->select("id", "barcode", "product_id", "category_id", "product_name", "price", "cash_discount_rate", "card_discount_rate", "delivery_discount_rate", "discount_locked", "discount_assigned_at", "low_stock_threshold", "product_model", "status")
-            // ->where("status", 1)
-            ->orderBy('id')->chunk(500, function ($oldProducts) {
-                foreach ($oldProducts as $oldProduct) {
-                    $product = Product::where('ref_id', $oldProduct->product_id)
-                        ->first();
+    //                 if (!$product) {
+    //                     $category = Category::where('ref_id', $oldProduct->category_id)->first();
+    //                     $brandId = null;
+    //                     if (!empty($oldProduct->product_model)) {
+    //                         $brand = Brand::where('name', $oldProduct->product_model)->first();
+    //                         if (!$brand) {
+    //                             dd($oldProduct);
+    //                         }
+    //                         $brandId = $brand->id;
+    //                     }
 
-                    if (!$product) {
-                        $category = Category::where('ref_id', $oldProduct->category_id)->first();
-                        $brandId = null;
-                        if (!empty($oldProduct->product_model)) {
-                            $brand = Brand::where('name', $oldProduct->product_model)->first();
-                            if (!$brand) {
-                                dd($oldProduct);
-                            }
-                            $brandId = $brand->id;
-                        }
+    //                     Product::create([
+    //                         'name' => $oldProduct->product_name,
+    //                         'category_id' => $category ? $category->id : Category::UNCATEGORIZED_ID,
+    //                         'brand_id' => $brandId,
+    //                         'barcode' => $oldProduct->product_id,
+    //                         'quantity_threshold' => $oldProduct->low_stock_threshold,
+    //                         'default_purchase_price' => null,
+    //                         'default_selling_price' => $oldProduct->price,
+    //                         'is_active' => true,
 
-                        Product::create([
-                            'name' => $oldProduct->product_name,
-                            'category_id' => $category ? $category->id : Category::UNCATEGORIZED_ID,
-                            'brand_id' => $brandId,
-                            'barcode' => $oldProduct->product_id,
-                            'quantity_threshold' => $oldProduct->low_stock_threshold,
-                            'default_purchase_price' => null,
-                            'default_selling_price' => $oldProduct->price,
-                            'is_active' => true,
+    //                         'discount_rate_cash' => $oldProduct->cash_discount_rate,
+    //                         'discount_rate_card' => $oldProduct->card_discount_rate,
+    //                         'discount_rate_shipment' => $oldProduct->delivery_discount_rate,
+    //                         'discount_assigned_at' => $oldProduct->discount_assigned_at,
+    //                         'is_locked' => $oldProduct->discount_locked,
 
-                            'discount_rate_cash' => $oldProduct->cash_discount_rate,
-                            'discount_rate_card' => $oldProduct->card_discount_rate,
-                            'discount_rate_shipment' => $oldProduct->delivery_discount_rate,
-                            'discount_assigned_at' => $oldProduct->discount_assigned_at,
-                            'is_locked' => $oldProduct->discount_locked,
+    //                         'ref_id' => $oldProduct->product_id,
 
-                            'ref_id' => $oldProduct->product_id,
+    //                         'created_at' => now(),
+    //                         'updated_at' => now(),
 
-                            'created_at' => now(),
-                            'updated_at' => now(),
+    //                         'created_by' => 1,
+    //                     ]);
+    //                 }
+    //             }
+    //         });
+    // }
 
-                            'created_by' => 1,
-                        ]);
-                    }
-                }
-            });
-    }
+    // public function excelImport(Request $request)
+    // {
+    //     // dd($request->all());
+    //     Excel::import(new ProductsImport, request()->file('products'));
+    // }
 
-    public function excelImport(Request $request)
-    {
-        // dd($request->all());
-        Excel::import(new ProductsImport, request()->file('products'));
-    }
-
-    public function fixQuantity()
-    {
-        $products = Product::select("id", "name", "quantity", DB::raw("(select sum(available_quantity) from product_inventory_entries where product_id = products.id) as stock"))
-            ->havingRaw("quantity != stock")
-            ->get();
-        foreach ($products as $product) {
-            $product->quantity = $product->stock;
-            $product->save();
-        }
-        unset($product);
-        return response()->json([
-            'message'   => 'Stock fixed successfully.',
-            'data'      => $products,
-            'status'    => 'success'
-        ], Response::HTTP_OK);
-    }
+    // public function fixQuantity()
+    // {
+    //     $products = Product::select("id", "name", "quantity", DB::raw("(select sum(available_quantity) from product_inventory_entries where product_id = products.id) as stock"))
+    //         ->havingRaw("quantity != stock")
+    //         ->get();
+    //     foreach ($products as $product) {
+    //         $product->quantity = $product->stock;
+    //         $product->save();
+    //     }
+    //     unset($product);
+    //     return response()->json([
+    //         'message'   => 'Stock fixed successfully.',
+    //         'data'      => $products,
+    //         'status'    => 'success'
+    //     ], Response::HTTP_OK);
+    // }
 }

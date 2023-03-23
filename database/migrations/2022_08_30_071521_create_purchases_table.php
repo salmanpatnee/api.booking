@@ -33,7 +33,7 @@ return new class extends Migration
             // $table->unsignedDecimal('expense_amount');
 
             $table->unsignedDecimal('net_amount', 12, 2);
-            $table->unsignedDecimal('paid_amount', 12, 2);            
+            $table->unsignedDecimal('paid_amount', 12, 2);
 
             $table->enum('status', ['draft', 'ordered', 'received', 'returned', 'final']);
             $table->enum('payment_status', ['paid', 'due']);
@@ -43,7 +43,7 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
 
-            $table->unsignedBigInteger("ref_id")->nullable();//old database reference id
+            $table->unsignedBigInteger("ref_id")->nullable(); //old database reference id
             $table->string("remarks", 1024)->nullable();
 
             $table->timestamps();

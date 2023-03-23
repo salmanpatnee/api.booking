@@ -16,10 +16,10 @@ class SupplierSeeder extends Seeder
     public function run()
     {
         Account::create([
-            'name' => 'Old Pharma',
+            'name' => 'Dummy Supplier',
             'email' => null,
             'phone' => null,
-            'company' => 'Pharma Square',
+            'trader' => '',
             'balance' => 0,
             'account_type' => 'supplier',
         ]);

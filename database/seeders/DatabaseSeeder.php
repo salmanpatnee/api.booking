@@ -21,15 +21,15 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        // $this->call(AccountHeadSeeder::class);
-        // $this->call(PaymentMethodSeeder::class);
+        $this->call(AccountHeadSeeder::class);
+        $this->call(PaymentMethodSeeder::class);
         // $this->call(BankAccountSeeder::class);
-        // $this->call(LocationSeeder::class);
+        $this->call(LocationSeeder::class);
         // $this->call(PermissionSeeder::class);
         // $this->call(RoleSeeder::class);
         $this->call(UserSeeder::class);
-        // $this->call(SupplierSeeder::class);
-        $this->call(CustomerSeeder::class);
+        $this->call(SupplierSeeder::class);
+        // $this->call(CustomerSeeder::class);
         $this->call(CategorySeeder::class);
         // $this->call(ExpenseTypeSeeder::class);
         // $this->call(JournalEntrySeeder::class);
