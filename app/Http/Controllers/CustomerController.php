@@ -23,6 +23,7 @@ class CustomerController extends Controller
         $term     = request('search', '');
 
         $accounts = Account::search($term)
+            ->whereIn('account_type', ['customer', 'both'])
             ->limit(10)
             ->get();
 

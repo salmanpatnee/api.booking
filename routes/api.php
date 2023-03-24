@@ -11,6 +11,7 @@ use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\BankCardController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\BankOfferController;
+use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CashRegisterController;
 use App\Http\Controllers\CategoryController;
@@ -75,12 +76,6 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth:sanctum')
     ->name('logout');
 
-Route::get('products/export', [ProductController::class, 'export']);
-Route::get('products/import', [ProductController::class, 'import']);
-Route::post('products/excel-import', [ProductController::class, 'excelImport']);
-Route::get('products/fix-quantity', [ProductController::class, 'fixQuantity']);
-Route::get('products/fix-purchase-price', FixPurchasePriceController::class);
-Route::apiResource('products', ProductController::class);
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -100,12 +95,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('brands/import', [BrandController::class, 'import']);
     Route::apiResource('brands', BrandController::class);
 
-    // Route::get('products/export', [ProductController::class, 'export']);
-    // Route::get('products/import', [ProductController::class, 'import']);
-    // Route::post('products/excel-import', [ProductController::class, 'excelImport']);
-    // Route::get('products/fix-quantity', [ProductController::class, 'fixQuantity']);
-    // Route::get('products/fix-purchase-price', FixPurchasePriceController::class);
-    // Route::apiResource('products', ProductController::class);
+    Route::get('products/export', [ProductController::class, 'export']);
+    Route::get('products/import', [ProductController::class, 'import']);
+    Route::post('products/excel-import', [ProductController::class, 'excelImport']);
+    Route::get('products/fix-quantity', [ProductController::class, 'fixQuantity']);
+    Route::get('products/fix-purchase-price', FixPurchasePriceController::class);
+    Route::apiResource('products', ProductController::class);
 
     Route::get('purchases/import', [PurchaseController::class, 'import']);
     Route::put('purchases/{purchase}/update-supplier', PurchaseUpdateSupplierController::class);
@@ -122,6 +117,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('sales/customers', SaleCustomerController::class)->only('store');
     Route::apiResource('payments', PaymentController::class);
     Route::apiResource('bank-accounts', BankAccountController::class);
+
+    Route::apiResource('bookings', BookingsController::class);
 
     Route::apiResource('purchase-orders', PurchaseOrderController::class);
 
