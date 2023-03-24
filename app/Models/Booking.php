@@ -17,6 +17,11 @@ class Booking extends Model
         return $this->belongsTo(Account::class);
     }
 
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
+    }
+
     public function scopeSearch($query, $term)
     {
         $term = "%$term%";

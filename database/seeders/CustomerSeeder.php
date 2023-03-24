@@ -20,7 +20,7 @@ class CustomerSeeder extends Seeder
             'name' => 'Walk-in Customer',
             'email' => "walkincustomer@pharmasquare.com.pk",
             'phone' => 03000742762,
-            'company' => 'Pharma Square',
+            'trader' => 'Pharma Square',
             'balance' => 0,
             'account_type' => 'customer',
         ]);

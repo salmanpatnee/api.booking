@@ -15,18 +15,20 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->string('booking_id')->unique();
+            $table->foreignId('account_id')->constrained();
+            $table->foreignId('employee_id')->constrained();
             $table->string('device_name');
             $table->string('model_no');
             $table->string('imei');
             $table->text('issue');
             $table->date('date');
-            $table->foreignId('account_id')->constrained();
-            $table->unsignedInteger('products_count');
+            // $table->unsignedInteger('products_count');
             $table->unsignedDecimal('charges')->nullable();
-            $table->unsignedDouble('purchase_amount')->nullable();
-            $table->enum('status', ['inprocess', 'completed', 'customer collected - Payment pending', 'customer collected - CBR', 'cannot repaired', 'final'])->default('inprocess'); //ordered,completed,returned
-            $table->foreignId('created_by')->constrained('users');
-            $table->foreignId('updated_by')->nullable()->constrained('users');
+            // $table->unsignedDouble('purchase_amount')->nullable();
+            $table->enum('status', ['in progress', 'repaired', 'complete', 'can not be repaired', 'customer collected CBR', 'customer collected payment pending', 'shop property', 'awaiting customer response', 'awaiting parts'])->default('in progress'); //ordered,completed,returned
+            // $table->foreignId('created_by')->constrained('users');
+            // $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
         });

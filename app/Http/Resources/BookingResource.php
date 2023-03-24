@@ -16,15 +16,17 @@ class BookingResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'booking_id' => $this->booking_id,
+            'account' => $this->account,
+            'employee' => $this->employee,
             'device_name' => $this->device_name,
             'model_no' => $this->model_no,
             'imei' => $this->imei,
             'issue' => $this->issue,
             'date' => $this->date,
-            'account' => $this->account,
-            'products_count' => $this->products_count,
+            // 'products_count' => $this->products_count,
             'charges' => $this->charges,
-            'purchase_amount' => $this->purchase_amount,
+            // 'purchase_amount' => $this->purchase_amount,
             'status' => $this->status,
         ];
     }

@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('name', 255);
-            $table->string('email', 255)->unique();
-            $table->string('phone')->nullable()->unique();
+            $table->string('email', 255)->nullable()->unique();
+            $table->string('phone')->unique();
             $table->string('address')->nullable();
             $table->timestamp('joining_date')->nullable();
             $table->timestamps();

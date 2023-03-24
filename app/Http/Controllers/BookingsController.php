@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BookingStoreRequest;
+use App\Http\Resources\BookingResource;
+use App\Models\Booking;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class BookingsController extends Controller
 {
@@ -13,7 +18,12 @@ class BookingsController extends Controller
      */
     public function index()
     {
-        //
+        $paginate  = request('paginate', 10);
+        $term      = request('search', '');
+
+        $bookings = Booking::search($term)->paginate($paginate);
+
+        return BookingResource::collection($bookings);
     }
 
     /**
@@ -22,9 +32,18 @@ class BookingsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BookingStoreRequest $request)
     {
-        //
+        $attributes = $request->all();
+        $attributes['booking_id'] = (int)(uniqid(mt_rand(), true));
+
+        $booking = Booking::create($attributes);
+
+        return response()->json([
+            'message'   => 'Booking created successfully.',
+            'data'      =>  new BookingResource($booking),
+            'status'    => 'success'
+        ], Response::HTTP_CREATED);
     }
 
     /**
@@ -33,9 +52,16 @@ class BookingsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Booking $booking, Request $request)
     {
-        //
+        if ($request->for == 'print') {
+            $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->booking_id));
+            $booking->qr_code = $base64String;
+            return response()->json(['data' => $booking]);
+        }
+
+
+        return new BookingResource($booking);
     }
 
     /**
