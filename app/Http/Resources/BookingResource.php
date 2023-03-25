@@ -24,10 +24,12 @@ class BookingResource extends JsonResource
             'imei' => $this->imei,
             'issue' => $this->issue,
             'date' => $this->date,
+            'delivered_date' => $this->delivered_date,
             // 'products_count' => $this->products_count,
             'charges' => $this->charges,
-            // 'purchase_amount' => $this->purchase_amount,
+            'purchase_amount' => $this->purchase_amount,
             'status' => $this->status,
+            'booking_details' => $this->booking_details,
         ];
     }
 }

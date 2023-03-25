@@ -23,12 +23,10 @@ return new class extends Migration
             $table->string('imei');
             $table->text('issue');
             $table->date('date');
-            // $table->unsignedInteger('products_count');
+            $table->date('delivered_date')->nullable();
             $table->unsignedDecimal('charges')->nullable();
-            // $table->unsignedDouble('purchase_amount')->nullable();
+            $table->unsignedDouble('purchase_amount')->nullable();
             $table->enum('status', ['in progress', 'repaired', 'complete', 'can not be repaired', 'customer collected CBR', 'customer collected payment pending', 'shop property', 'awaiting customer response', 'awaiting parts'])->default('in progress'); //ordered,completed,returned
-            // $table->foreignId('created_by')->constrained('users');
-            // $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->timestamps();
             $table->softDeletes();
         });

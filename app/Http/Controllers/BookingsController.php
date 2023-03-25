@@ -18,11 +18,11 @@ class BookingsController extends Controller
      */
     public function index()
     {
-        $paginate  = request('paginate', 10);
+        $paginate  = request('paginate', 30);
         $term      = request('search', '');
 
-        $bookings = Booking::search($term)->paginate($paginate);
-
+        $bookings = Booking::query()->indexQuery()->paginate($paginate);
+       
         return BookingResource::collection($bookings);
     }
 
@@ -35,7 +35,7 @@ class BookingsController extends Controller
     public function store(BookingStoreRequest $request)
     {
         $attributes = $request->all();
-        $attributes['booking_id'] = (int)(uniqid(mt_rand(), true));
+        $attributes['booking_id'] = (int)(uniqid(mt_rand(1000, 9000), true));
 
         $booking = Booking::create($attributes);
 

@@ -22,6 +22,35 @@ class Booking extends Model
         return $this->belongsTo(Employee::class);
     }
 
+    public function bookingDetails()
+    {
+        return $this->hasMany(BookingDetail::class);
+    }
+
+    public function scopeIndexQuery($query)
+    {
+        $request = request();
+
+        $term = request('search', '');
+        $sortOrder = request('sortOrder', 'desc');
+        $orderBy = request('orderBy', 'created_at');
+        $query->search($term);
+
+        if (!empty($request->id))
+            $query->where('booking_id', $request->id);
+        if (!empty($request->start_date))
+            $query->where('date', '>=', $request->start_date);
+        if (!empty($request->end_date))
+            $query->where('date', '<=', $request->end_date);
+        if (!empty($request->status))
+            $query->where('status', $request->status);
+        // else {
+        //     $query->completed();
+        // }
+
+        $query->orderBy($orderBy, $sortOrder);
+    }
+
     public function scopeSearch($query, $term)
     {
         $term = "%$term%";
