@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('booking_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('booking_id')->constrained();
+            $table->foreignId('booking_id');
             $table->foreignId('product_id')->constrained();
             $table->double('price');
             $table->unsignedInteger('quantity');

@@ -62,26 +62,26 @@ class ProductController extends Controller
 
         if ($request->for == 'sales.create') {
 
-            $products = Product::select('id', 'name', 'quantity as stock', 'default_selling_price', 'discount_rate_cash', 'discount_rate_card', 'discount_rate_shipment', 'barcode', 'default_selling_price_old');
+            $products = Product::select('id', 'name', 'quantity as stock', 'default_selling_price', 'barcode');
 
-            if (!empty($request->barcode)) {
-                $products->where('barcode', $request->barcode);
-                $products = $products->first();
+            // if (!empty($request->barcode)) {
+            //     $products->where('barcode', $request->barcode);
+            //     $products = $products->first();
 
-                if (!$products) {
-                    return response()->json(["message" => "No product found"], 422);
-                }
+            //     if (!$products) {
+            //         return response()->json(["message" => "No product found"], 422);
+            //     }
 
-                if ($products->stock === 0) {
-                    return response()->json(["message" => "Product is out of stock"], 422);
-                }
-            } else {
-                $products->where('name', 'like', "%{$request->search}%");
-                if (!empty($request->category)) {
-                    $products->where('category_id', '=', $request->category);
-                }
-                $products = $products->limit(27)->get();
+            //     if ($products->stock === 0) {
+            //         return response()->json(["message" => "Product is out of stock"], 422);
+            //     }
+            // } else {
+            $products->where('name', 'like', "%{$request->search}%");
+            if (!empty($request->category)) {
+                $products->where('category_id', '=', $request->category);
             }
+            $products = $products->limit(27)->get();
+            // }
             // ->with([
             //     'category' => function ($q) {
             //         $q->select('id', 'name');

@@ -16,7 +16,7 @@ class BookingResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'booking_id' => $this->booking_id,
+            'reference_id' => $this->reference_id,
             'account' => $this->account,
             'employee' => $this->employee,
             'device_name' => $this->device_name,
@@ -29,7 +29,7 @@ class BookingResource extends JsonResource
             'charges' => $this->charges,
             'purchase_amount' => $this->purchase_amount,
             'status' => $this->status,
-            'booking_details' => $this->booking_details,
+            'booking_details' => $this->bookingDetails ? $this->bookingDetails : [],
         ];
     }
 }

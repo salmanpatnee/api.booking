@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->string('booking_id')->unique();
+            $table->string('reference_id')->unique();
             $table->foreignId('account_id')->constrained();
             $table->foreignId('employee_id')->constrained();
             $table->string('device_name');

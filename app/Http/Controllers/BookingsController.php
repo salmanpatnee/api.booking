@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\BookingStoreRequest;
+use App\Http\Requests\BookingUpdateRequest;
 use App\Http\Resources\BookingResource;
 use App\Models\Booking;
+use App\Models\BookingDetail;
+use App\Models\Product;
+use App\Services\InventoryService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -22,7 +27,7 @@ class BookingsController extends Controller
         $term      = request('search', '');
 
         $bookings = Booking::query()->indexQuery()->paginate($paginate);
-       
+
         return BookingResource::collection($bookings);
     }
 
@@ -35,7 +40,7 @@ class BookingsController extends Controller
     public function store(BookingStoreRequest $request)
     {
         $attributes = $request->all();
-        $attributes['booking_id'] = (int)(uniqid(mt_rand(1000, 9000), true));
+        $attributes['reference_id'] = (int)(uniqid(mt_rand(1000, 9000), true));
 
         $booking = Booking::create($attributes);
 
@@ -55,9 +60,11 @@ class BookingsController extends Controller
     public function show(Booking $booking, Request $request)
     {
         if ($request->for == 'print') {
-            $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->booking_id));
-            $booking->qr_code = $base64String;
-            return response()->json(['data' => $booking]);
+            // $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->reference_id));
+            // $booking->qr_code = $base64String;
+            // return response()->json(['data' => $booking]);
+            $booking->qr_code = "";
+            return new BookingResource($booking);
         }
 
 
@@ -67,13 +74,131 @@ class BookingsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  
+     * \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BookingUpdateRequest $request, Booking $booking)
     {
-        //
+        $attributes = $request->all();
+
+        $bookingDetails = $booking->bookingDetails;
+        $products = [];
+        $bookingDetailData = [];
+        $errorMessage = null;
+
+        foreach ($request->booking_details as $i => $requestBookingDetail) {
+            $products[$i] = Product::find($requestBookingDetail['product_id']);
+
+
+            /* available quantity = ordered quantity + product quantity */
+            $availableQuantity = $products[$i]->quantity;
+
+
+            if (array_key_exists("id", $requestBookingDetail)) {
+                $saleDetail = $bookingDetails->where('id', $requestBookingDetail['id'])->first();
+                $availableQuantity += $saleDetail->quantity;
+            }
+
+
+            /* quantity validation */
+            if ($requestBookingDetail['quantity'] > $availableQuantity) {
+                $errors[] = ['booking_details.' . $i . '.quantity' => ["The selected sale_details.{$i}.quantity can not be greater than {$products[$i]->quantity}"]];
+                if (!$errorMessage) {
+                    $errorMessage = "The selected booking_details.{$i}.quantity can not be greater than {$products[$i]->quantity}";
+                }
+            }
+
+
+            $bookingDetailAmount = $requestBookingDetail['quantity'] * $requestBookingDetail['price'];
+
+            // $quantityCount += $requestBookingDetail['quantity'];
+            // $grossAmount += $requestBookingDetail['quantity'] * $requestBookingDetail['original_price'];
+
+            $saleDetailData[] = [
+                'id' => $requestBookingDetail['id'] ?? null,
+                'product_id' => $requestBookingDetail['product_id'],
+                'price' => $requestBookingDetail['price'],
+                'quantity' => $requestBookingDetail['quantity'],
+                'amount' => $bookingDetailAmount,
+                'product' => $products[$i],
+            ];
+        }
+
+        unset($i);
+
+        if (!empty($errors)) {
+            return response()->json(["message" => $errorMessage, "errors" => $errors], 422);
+        }
+
+        $inventoryService = new InventoryService();
+        $saleDetailIds = $bookingDetails->pluck('id', 'id');
+        $purchaseAmount = 0;
+
+        DB::beginTransaction();
+
+        foreach ($saleDetailData as $saleDetailEntry) {
+            $saleDetailEntry['booking_id'] = $booking->id;
+
+            /* check if old entry exist */
+            if ($saleDetailEntry['id']) {
+                $saleDetail = $bookingDetails->where('id', $saleDetailEntry['id'])->first();
+                /* check if entry is change */
+                if ($saleDetail->quantity != $saleDetailEntry['quantity'] || $saleDetail->price != $saleDetailEntry['price']) {
+                    /* reverse inventory */
+                    $inventoryService->reverseInventoryFromHolder(1, $booking->id, $saleDetail->product_id);
+                    $inventoryService->updateProductQuantityOnSalesReturn($saleDetailEntry['product'], $saleDetail->quantity);
+
+                    /* store inventory */
+                    $saleDetailPurchaseAmount = $inventoryService->updateInventoryOnSale($booking->id, $booking->date, $saleDetailEntry['product_id'], $saleDetailEntry['price'], $saleDetailEntry['quantity'], 0);
+                    $inventoryService->updateProductQuantityOnSale($saleDetailEntry['product'], $saleDetailEntry['quantity']);
+
+                    /* update sale detail */
+                    $saleDetailEntry['purchase_amount'] = $saleDetailPurchaseAmount;
+                    $saleDetail->update($saleDetailEntry);
+
+                    $purchaseAmount += $saleDetailPurchaseAmount;
+                } else {
+                    /* move quantity from holder to sold */
+                    $inventoryService->updateInventoryFromHolder(1, $booking->id, $booking->date, $saleDetailEntry['product_id']);
+
+                    $purchaseAmount += $saleDetail->purchase_amount;
+                }
+                $saleDetailIds->forget($saleDetail->id);
+            } else {
+                $saleDetailPurchaseAmount = $inventoryService->updateInventoryOnSale($booking->id, $booking->date, $saleDetailEntry['product_id'], $saleDetailEntry['price'], $saleDetailEntry['quantity'], 0);
+                $inventoryService->updateProductQuantityOnSale($saleDetailEntry['product'], $saleDetailEntry['quantity']);
+                $saleDetailEntry['purchase_amount'] = $saleDetailPurchaseAmount;
+                $saleDetail = BookingDetail::create($saleDetailEntry);
+
+                $purchaseAmount += $saleDetailPurchaseAmount;
+            }
+        }
+
+        foreach ($saleDetailIds as $saleDetailId) {
+            $saleDetail = $bookingDetails->where('id', $saleDetailId)->first();
+
+            $product = $saleDetail->product;
+
+            $inventoryService->reverseInventoryFromHolder(1, $booking->id, $saleDetail->product_id, $saleDetail->quantity);
+            $inventoryService->updateProductQuantityOnSalesReturn($product, $saleDetail->quantity);
+
+            $saleDetail = $bookingDetails->where('id', $saleDetailId)->first();
+            $saleDetail->delete();
+        }
+
+        $saleData['purchase_amount'] = $purchaseAmount;
+
+        $booking->update($attributes);
+
+        DB::commit();
+
+        return response()->json([
+            'message'   => 'Booking updated successfully.',
+            'data'      =>  new BookingResource($booking),
+            'status'    => 'success'
+        ]);
     }
 
     /**
