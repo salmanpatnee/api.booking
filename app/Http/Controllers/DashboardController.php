@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
 use App\Models\Account;
+use App\Models\Booking;
+use App\Models\Employee;
 use App\Models\Expense;
 use App\Models\Product;
 use App\Models\Purchase;
@@ -25,13 +27,13 @@ class DashboardController extends Controller
     {
         return [
             'total_customers' => Account::where('account_type', '=', 'customer')->count(),
-            'total_suppliers' => Account::where('account_type', '=', 'supplier')->count(),
+            'total_employees' => Employee::count(),
             'total_products' => Product::active()->count(),
             'todays_total_purchase_amount' => Purchase::whereDate('date', Carbon::today())->sum('net_amount'),
             'todays_total_purchase_return_amount' => PurchaseReturn::whereDate('date', Carbon::today())->sum('purchase_return_amount'),
             'todays_total_sales_amount' => Sale::completed()->whereDate('date', Carbon::today())->sum('net_amount'),
             'todays_total_sales_return_amount' => SalesReturn::whereDate('date', Carbon::today())->sum('sale_return_amount'),
-            'todays_total_orders' => Sale::whereDate('date', Carbon::today())->count(),
+            'todays_total_orders' => Booking::whereDate('date', Carbon::today())->count(),
             'todays_total_expenses' => Expense::whereDate('date', Carbon::today())->sum('amount'),
             // 'alert_quantity_products' => ProductResource::collection(Product::aleryQuantity()->paginate(10))
         ];

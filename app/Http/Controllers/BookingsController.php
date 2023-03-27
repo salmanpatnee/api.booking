@@ -60,8 +60,13 @@ class BookingsController extends Controller
     public function show(Booking $booking, Request $request)
     {
         if ($request->for == 'print') {
-            $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->reference_id));
-            $booking->qr_code = $base64String;
+            // $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->reference_id));
+            // $booking->qr_code = $base64String;
+            $booking->load([
+                'account' => function ($q) {
+                    $q->select('id', 'name', 'phone');
+                },
+            ]);
             return response()->json(['data' => $booking]);
             // $booking->qr_code = "";
             // return new BookingResource($booking);
@@ -116,7 +121,7 @@ class BookingsController extends Controller
             // $quantityCount += $requestBookingDetail['quantity'];
             // $grossAmount += $requestBookingDetail['quantity'] * $requestBookingDetail['original_price'];
 
-            $saleDetailData[] = [
+            $bookingDetailData[] = [
                 'id' => $requestBookingDetail['id'] ?? null,
                 'product_id' => $requestBookingDetail['product_id'],
                 'price' => $requestBookingDetail['price'],
@@ -138,7 +143,7 @@ class BookingsController extends Controller
 
         DB::beginTransaction();
 
-        foreach ($saleDetailData as $saleDetailEntry) {
+        foreach ($bookingDetailData as $saleDetailEntry) {
             $saleDetailEntry['booking_id'] = $booking->id;
 
             /* check if old entry exist */

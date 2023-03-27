@@ -29,8 +29,8 @@ class BookingUpdateRequest extends FormRequest
             'model_no' => 'required|string',
             'imei' => 'required|string|min:15|max:15',
             'issue' => 'required|string',
-            'estimated_cost' => 'required|numeric', 
-            'charges' => 'required_if:status,complete|numeric',
+            'estimated_cost' => 'required|numeric',
+            'charges' => 'required_if:status,complete',
             'status' => 'required|in:in progress,repaired,complete,can not be repaired,customer collected CBR,customer collected payment pending,shop property,awaiting customer response,awaiting parts',
         ];
     }
