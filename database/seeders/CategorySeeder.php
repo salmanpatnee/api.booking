@@ -15,23 +15,14 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        Category::create([
-            'id' => 1,
-            'name' => "Uncategorized",
-        ]);
+    
 
-        // foreach (range(1, 300) as $i) {
+        $categories = ['Uncategorized', 'Parts'];
 
-        //     Category::create([
-        //         'name' => 'Category ' . $i,
-        //     ]);
-        // }
-
-        // $data = ['Tablets', 'Syrups'];
-        // foreach ($data as $category) {
-        //     Category::create([
-        //         'name'=>$category
-        //     ]);
-        // }
+        foreach ($categories as $category) {
+            Category::create([
+                'name'=>$category
+            ]);
+        }
     }
 }

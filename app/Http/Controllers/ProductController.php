@@ -32,7 +32,7 @@ class ProductController extends Controller
 
 
         if ($request->for == 'purchases.create') {
-            $products = Product::select('id', 'name', 'quantity', 'default_purchase_price', 'default_selling_price', 'barcode')
+            $products = Product::select('id', 'name', 'quantity', 'default_purchase_price', 'default_selling_price')
                 ->where('name', 'like', "%{$request->search}%")
                 ->with([
                     'category' => function ($q) {
@@ -62,7 +62,7 @@ class ProductController extends Controller
 
         if ($request->for == 'sales.create') {
 
-            $products = Product::select('id', 'name', 'quantity as stock', 'default_selling_price', 'barcode');
+            $products = Product::select('id', 'name', 'quantity as stock', 'default_selling_price', );
 
             // if (!empty($request->barcode)) {
             //     $products->where('barcode', $request->barcode);
@@ -124,7 +124,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
 
             'quantity' =>  'nullable',
-            'barcode' => 'required|unique:products,barcode',
+            // 'barcode' => 'required|unique:products,barcode',
 
             'description' => 'nullable',
 
@@ -217,7 +217,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
 
             'quantity' =>  'nullable',
-            'barcode' => ['required', Rule::unique('products', 'barcode')->ignore($product->id)],
+            // 'barcode' => ['required', Rule::unique('products', 'barcode')->ignore($product->id)],
 
             'description' => 'nullable',
 

@@ -60,11 +60,11 @@ class BookingsController extends Controller
     public function show(Booking $booking, Request $request)
     {
         if ($request->for == 'print') {
-            // $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->reference_id));
-            // $booking->qr_code = $base64String;
-            // return response()->json(['data' => $booking]);
-            $booking->qr_code = "";
-            return new BookingResource($booking);
+            $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->reference_id));
+            $booking->qr_code = $base64String;
+            return response()->json(['data' => $booking]);
+            // $booking->qr_code = "";
+            // return new BookingResource($booking);
         }
 
 

@@ -31,7 +31,7 @@ class BookingStoreRequest extends FormRequest
             'imei' => 'required|string|min:15|max:15',
             'issue' => 'required|string',
             'date' => 'required|date',
-            'charges' => 'required|numeric',
+            'estimated_cost' => 'required|numeric', 
             // 'status' => 'required|in:draft,inprocess,completed, customer collected - Payment pending, customer collected - CBR, cannot repaired',
 
         ];

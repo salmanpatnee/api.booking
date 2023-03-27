@@ -24,6 +24,7 @@ return new class extends Migration
             $table->text('issue');
             $table->date('date');
             $table->date('delivered_date')->nullable();
+            $table->unsignedDecimal('estimated_cost')->nullable();
             $table->unsignedDecimal('charges')->nullable();
             $table->unsignedDouble('purchase_amount')->nullable();
             $table->enum('status', ['in progress', 'repaired', 'complete', 'can not be repaired', 'customer collected CBR', 'customer collected payment pending', 'shop property', 'awaiting customer response', 'awaiting parts'])->default('in progress'); //ordered,completed,returned

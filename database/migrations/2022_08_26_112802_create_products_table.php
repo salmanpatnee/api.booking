@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->unsignedInteger('quantity')->default(0);
 
-            $table->string('barcode')->unique();
+            // $table->string('barcode')->unique();
             $table->text('description')->nullable();
 
             $table->unsignedDecimal('vat_amount')->nullable();

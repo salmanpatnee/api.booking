@@ -26,6 +26,7 @@ class BookingResource extends JsonResource
             'date' => $this->date,
             'delivered_date' => $this->delivered_date,
             // 'products_count' => $this->products_count,
+            'estimated_cost' => $this->estimated_cost,
             'charges' => $this->charges,
             'purchase_amount' => $this->purchase_amount,
             'status' => $this->status,
