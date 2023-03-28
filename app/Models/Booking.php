@@ -37,7 +37,7 @@ class Booking extends Model
         $query->search($term);
 
         if (!empty($request->id))
-            $query->where('booking_id', $request->id);
+            $query->where('reference_id', $request->id);
         if (!empty($request->start_date))
             $query->where('date', '>=', $request->start_date);
         if (!empty($request->end_date))
@@ -56,10 +56,15 @@ class Booking extends Model
         $term = "%$term%";
 
         $query->where(function ($query) use ($term) {
-            $query->where('id', 'like', $term)
+            $query->where('reference_id', 'like', $term)
                 ->orWhereHas('account', function ($query) use ($term) {
                     $query->where('name', 'like', $term)->orWhere('phone', 'like', $term);
                 });
         });
+    }
+
+    public function scopeCompleted($query)
+    {
+        $query->where('status', '=', 'complete');
     }
 }

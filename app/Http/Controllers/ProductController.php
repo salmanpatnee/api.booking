@@ -230,16 +230,16 @@ class ProductController extends Controller
         DB::beginTransaction();
         $product->update($attributes);
 
-        $newCategoryId = $attributes['category_id'];
-        if ($oldCategoryId != $newCategoryId) {
-            $oldCategory = Category::find($oldCategoryId);
-            $oldCategory->products_count = $oldCategory->products_count - 1;
-            $oldCategory->save();
+        // $newCategoryId = $attributes['category_id'];
+        // if ($oldCategoryId != $newCategoryId) {
+        //     $oldCategory = Category::find($oldCategoryId);
+        //     $oldCategory->products_count = $oldCategory->products_count - 1;
+        //     $oldCategory->save();
 
-            $newCategory = Category::find($newCategoryId);
-            $newCategory->products_count = $newCategory->products_count + 1;
-            $newCategory->save();
-        }
+        //     $newCategory = Category::find($newCategoryId);
+        //     $newCategory->products_count = $newCategory->products_count + 1;
+        //     $newCategory->save();
+        // }
 
 
         DB::commit();

@@ -18,9 +18,9 @@ class CustomerSeeder extends Seeder
         /* Customer without balance */
         Account::create([
             'name' => 'Walk-in Customer',
-            'email' => "walkincustomer@pharmasquare.com.pk",
+            'email' => "walkincustomer@cvstecnologies.com",
             'phone' => 03000742762,
-            'trader' => 'Pharma Square',
+            'trader' => 'Acme',
             'balance' => 0,
             'account_type' => 'customer',
         ]);

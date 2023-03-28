@@ -24,9 +24,14 @@ class BookingsController extends Controller
     public function index()
     {
         $paginate  = request('paginate', 30);
-        $term      = request('search', '');
+        $bookings = [];
 
-        $bookings = Booking::query()->indexQuery()->paginate($paginate);
+        if(request('for') == 'sales'){
+            $bookings = Booking::query()->indexQuery()->completed()->paginate($paginate);
+        } else {
+
+            $bookings = Booking::query()->indexQuery()->paginate($paginate);
+        }
 
         return BookingResource::collection($bookings);
     }
@@ -60,8 +65,8 @@ class BookingsController extends Controller
     public function show(Booking $booking, Request $request)
     {
         if ($request->for == 'print') {
-            // $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->reference_id));
-            // $booking->qr_code = $base64String;
+            $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->reference_id));
+            $booking->qr_code = $base64String;
             $booking->load([
                 'account' => function ($q) {
                     $q->select('id', 'name', 'phone');
@@ -193,7 +198,11 @@ class BookingsController extends Controller
             $saleDetail->delete();
         }
 
-        $saleData['purchase_amount'] = $purchaseAmount;
+        $attributes['purchase_amount'] = $purchaseAmount;
+
+        if($attributes['status'] == 'complete'){
+            $attributes['delivered_date'] = date('Y-m-d');
+        }
 
         $booking->update($attributes);
 
