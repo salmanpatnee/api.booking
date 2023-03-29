@@ -31,7 +31,7 @@ class DashboardController extends Controller
             'total_products' => Product::active()->count(),
             'todays_total_purchase_amount' => Purchase::whereDate('date', Carbon::today())->sum('net_amount'),
             'todays_total_purchase_return_amount' => PurchaseReturn::whereDate('date', Carbon::today())->sum('purchase_return_amount'),
-            'todays_total_sales_amount' => Sale::completed()->whereDate('date', Carbon::today())->sum('net_amount'),
+            'todays_total_sales_amount' => Booking::completed()->whereDate('date', Carbon::today())->sum('charges'),
             'todays_total_sales_return_amount' => SalesReturn::whereDate('date', Carbon::today())->sum('sale_return_amount'),
             'todays_total_orders' => Booking::whereDate('date', Carbon::today())->count(),
             'todays_total_expenses' => Expense::whereDate('date', Carbon::today())->sum('amount'),
