@@ -19,11 +19,17 @@ return new class extends Migration
             $table->foreignId('account_id')->constrained();
             $table->foreignId('employee_id')->constrained();
             $table->string('device_name');
-            $table->string('model_no');
             $table->string('imei');
+            $table->string('device_type');
+            $table->string('device_maker');
+            $table->string('device_model');
             $table->text('issue');
+            $table->string('issue_type');
             $table->date('date');
             $table->date('delivered_date')->nullable();
+            $table->string('serial_no')->nullable();
+            $table->text('customer_comments')->nullable();
+            $table->text('notes')->nullable();
             $table->unsignedDecimal('estimated_cost')->nullable();
             $table->unsignedDecimal('charges')->nullable();
             $table->unsignedDouble('purchase_amount')->nullable();

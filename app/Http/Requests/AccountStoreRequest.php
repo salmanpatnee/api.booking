@@ -28,10 +28,10 @@ class AccountStoreRequest extends FormRequest
             'name' => 'required',
             'email' => ['nullable', Rule::unique('accounts')->where(fn ($query) => $query->where('account_type', $this->account_type))->ignore($this->id)],
 
-            'trader' => 'nullable',
+            'trade_name' => 'nullable',
 
             'phone' => ['nullable', Rule::unique('accounts')->where(fn ($query) => $query->where('account_type', $this->account_type))->ignore($this->id)],
-
+            'address' => 'nullable',
             'balance' => 'required',
 
             'account_type' => 'required|in:supplier,customer,both'

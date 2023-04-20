@@ -17,9 +17,10 @@ class SupplierSeeder extends Seeder
     {
         Account::create([
             'name' => 'Dummy Supplier',
-            'email' => null,
+            'trade_name' => null,
             'phone' => null,
-            'trader' => '',
+            'email' => null,
+            'address' => null,
             'balance' => 0,
             'account_type' => 'supplier',
         ]);

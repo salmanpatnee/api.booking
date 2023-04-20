@@ -18,9 +18,10 @@ class CustomerSeeder extends Seeder
         /* Customer without balance */
         Account::create([
             'name' => 'Walk-in Customer',
-            'email' => "walkincustomer@cvstecnologies.com",
+            'trade_name' => 'Acme',
             'phone' => 03000742762,
-            'trader' => 'Acme',
+            'email' => "walkincustomer@icrack.co.uk",
+            'address' => "113 Duke St, Merseyside, WA10 2JG, United Kingdom",
             'balance' => 0,
             'account_type' => 'customer',
         ]);

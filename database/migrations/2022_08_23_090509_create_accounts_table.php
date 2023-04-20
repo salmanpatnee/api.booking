@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->nullable();
+            $table->string('trade_name')->nullable();
             $table->string('phone')->nullable();
-            $table->string('trader')->nullable();
+            $table->string('email')->nullable();
             $table->string("address", 1024)->nullable();
             $table->double('balance');
             $table->enum('account_type', ['supplier', 'customer', 'both']);

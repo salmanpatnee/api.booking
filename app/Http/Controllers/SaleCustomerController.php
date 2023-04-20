@@ -29,11 +29,12 @@ class SaleCustomerController extends Controller
     {
         $data = $request->validate([
             'name' => 'required',
+            'trade_name' => 'nullable',
+            'phone' => ['required'],
             'email' => ['nullable'],
 
-            'company' => 'nullable',
+            'address' => 'nullable',
 
-            'phone' => ['required'],
 
             'balance' => 'required',
         ]);
