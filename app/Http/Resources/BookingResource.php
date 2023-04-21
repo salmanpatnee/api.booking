@@ -22,7 +22,7 @@ class BookingResource extends JsonResource
             'device_name' => $this->device_name,
             'imei' => $this->imei,
             'device_type' => $this->device_type,
-            'device_maker' => $this->device_maker,
+            'device_make' => $this->device_make,
             'device_model' => $this->device_model,
             'issue' => $this->issue,
             'issue_type' => $this->issue_type,

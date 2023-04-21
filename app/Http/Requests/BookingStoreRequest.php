@@ -29,7 +29,7 @@ class BookingStoreRequest extends FormRequest
             'device_name' => 'required|string',
             'imei' => 'required|string|min:15|max:15',
             'device_type' => 'required|string',
-            'device_maker' => 'required|string',
+            'device_make' => 'required|string',
             'device_model' => 'required|string',
             'issue' => 'required|string',
             'issue_type' => 'required|string',

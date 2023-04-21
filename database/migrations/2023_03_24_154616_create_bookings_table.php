@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('device_name');
             $table->string('imei');
             $table->string('device_type');
-            $table->string('device_maker');
+            $table->string('device_make');
             $table->string('device_model');
             $table->text('issue');
             $table->string('issue_type');
