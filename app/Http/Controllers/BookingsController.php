@@ -45,7 +45,9 @@ class BookingsController extends Controller
     public function store(BookingStoreRequest $request)
     {
         $attributes = $request->all();
-        $attributes['reference_id'] = (int)(uniqid(mt_rand(1000, 9000), true));
+        // $attributes['reference_id'] = (int)(uniqid(mt_rand(1000, 9000), true));
+        $reference_id = str_pad(mt_rand(1,999999), 6, '0', STR_PAD_LEFT);
+        $attributes['reference_id'] = $reference_id;
 
         $booking = Booking::create($attributes);
 
