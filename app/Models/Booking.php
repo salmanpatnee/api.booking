@@ -37,7 +37,9 @@ class Booking extends Model
         $query->search($term);
 
         if (!empty($request->id))
-            $query->where('reference_id', $request->id);
+            $query->where('reference_id', $request->id)->orWhereHas('account', function ($query) use ($request) {
+                $query->where('name', 'like', $request->id)->orWhere('phone', 'like', $request->id);
+            });
         if (!empty($request->start_date))
             $query->where('date', '>=', $request->start_date);
         if (!empty($request->end_date))
