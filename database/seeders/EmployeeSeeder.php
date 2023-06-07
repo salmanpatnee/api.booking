@@ -18,7 +18,7 @@ class EmployeeSeeder extends Seeder
         Employee::create([
             'name' => 'Dummy Employee',
             'email' => null,
-            'phone' => '03312432356',
+            'phone' => '01709542255',
             'address' => null,
             'joining_date' => null,
         ]);

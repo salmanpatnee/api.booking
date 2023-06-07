@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         // $this->call(JournalEntrySeeder::class);
         // $this->call(BrandSeeder::class);
         // \App\Models\Product::factory(10)->create();
-        $this->call(ProductSeeder::class);
+        // $this->call(ProductSeeder::class);
         // $this->call(AccountSeeder::class);
         // $this->call(PurchaseSeeder::class);
         // $this->call(SaleSeeder::class);

@@ -20,6 +20,6 @@ class BookingDetail extends Model
 
     public function booking()
     {
-        return $this->belongsTo(Booking::class);
+        return $this->belongsTo(BookingList::class);
     }
 }

@@ -11,6 +11,8 @@ use App\Http\Controllers\BankAccountController;
 use App\Http\Controllers\BankCardController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\BankOfferController;
+use App\Http\Controllers\BookingItemDetailController;
+use App\Http\Controllers\BookingListController;
 use App\Http\Controllers\BookingsController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CashRegisterController;
@@ -55,6 +57,9 @@ use App\Http\Controllers\TodaysReportController;
 use App\Http\Controllers\TodaysSaleController;
 use App\Http\Controllers\TrialBalanceController;
 use App\Http\Controllers\UserController;
+use App\Models\Account;
+use App\Models\BookingListDetails;
+use App\Notifications\CustomerSmsNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -77,6 +82,8 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->name('logout');
 
 
+// Route::apiResource('booking-list', BookingListController::class);
+// Route::apiResource('booking-items', BookingItemDetailController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('dashboard', DashboardController::class);
@@ -119,6 +126,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('bank-accounts', BankAccountController::class);
 
     Route::apiResource('bookings', BookingsController::class);
+    Route::apiResource('booking-list', BookingListController::class);
+    Route::apiResource('booking-items', BookingItemDetailController::class);
 
     Route::apiResource('purchase-orders', PurchaseOrderController::class);
 
@@ -189,4 +198,29 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::get('send-sms', function () {
+
+    $customer = Account::where('id', 2)->first();
+
+    $basic  = new \Vonage\Client\Credentials\Basic("3aac7d21", "sLtpgBgVp4etj329");
+    $client = new \Vonage\Client($basic);
+
+    $response = $client->sms()->send(
+        new \Vonage\SMS\Message\SMS($customer->phone, "iCrack", 'A text message sent using the Nexmo SMS API')
+    );
+
+    $message = $response->current();
+
+    if ($message->getStatus() == 0) {
+        return "The message was sent successfully\n";
+    } else {
+        return "The message failed with status: " . $message->getStatus() . "\n";
+    }
+
+    // Via Notification
+    // $customer->notify(new CustomerSmsNotification);
+    // return 'Send';
+
 });

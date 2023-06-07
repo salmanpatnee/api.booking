@@ -24,21 +24,21 @@ class BookingUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'employee_id' => 'required|exists:employees,id',
-            'device_name' => 'required|string',
-            'device_model' => 'required|string',
-            'imei' => 'required_if:device_type,==,Smartphones|string|min:15|max:15',
-            'device_type' => 'required|string',
-            'device_make' => 'required|string',
-            'device_model' => 'required|string',
-            'issue' => 'required|string',
-            'issue_type' => 'required|string',
+            'employee_id' => 'nullable|exists:employees,id',
+            'device_name' => 'nullable|string',
+            'device_model' => 'nullable|string',
+            'imei' => 'nullable|string|min:15|max:15',
+            'device_type' => 'nullable|string',
+            'device_make' => 'nullable|string',
+            'device_model' => 'nullable|string',
+            'issue' => 'nullable|string',
+            'issue_type' => 'nullable|string',
             'serial_no' => 'nullable',
-            'estimated_cost' => 'required|numeric',
+            'estimated_cost' => 'nullable|numeric',
             'customer_comments' => 'nullable',
             'notes' => 'nullable',
-            'charges' => 'required_if:status,complete',
-            'status' => 'required|in:in progress,repaired,complete,can not be repaired,customer collected CBR,customer collected payment pending,shop property,awaiting customer response,awaiting parts',
+            'charges' => 'nullable',
+            'status' => 'nullable|in:in progress,repaired,complete,can not be repaired,customer collected CBR,customer collected payment pending,shop property,awaiting customer response,awaiting parts',
         ];
     }
 }

@@ -19,7 +19,7 @@ class CustomerSeeder extends Seeder
         Account::create([
             'name' => 'Walk-in Customer',
             'trade_name' => 'Acme',
-            'phone' => 03000742762,
+            'phone' => '01709542255',
             'email' => "walkincustomer@icrack.co.uk",
             'address' => "113 Duke St, Merseyside, WA10 2JG, United Kingdom",
             'balance' => 0,

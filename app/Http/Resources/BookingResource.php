@@ -37,7 +37,8 @@ class BookingResource extends JsonResource
             'charges' => $this->charges,
             'purchase_amount' => $this->purchase_amount,
             'status' => $this->status,
-            'booking_details' => $this->bookingDetails ? $this->bookingDetails : [],
+            'booking_details' => $this->bookingDetails ? $this->bookingDetails : [], 
+            'qr_code' => $this->qr_code
         ];
     }
 }

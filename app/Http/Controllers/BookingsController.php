@@ -26,14 +26,20 @@ class BookingsController extends Controller
         $paginate  = request('paginate', 30);
         $bookings = [];
 
-        if(request('for') == 'sales'){
+        if (request('for') == 'sales') {
             $bookings = Booking::query()->indexQuery()->completed()->paginate($paginate);
         } else {
 
+            $totalEstimatedCost = Booking::query()->indexQuery()->sum('estimated_cost');
             $bookings = Booking::query()->indexQuery()->paginate($paginate);
         }
 
-        return BookingResource::collection($bookings);
+
+        return BookingResource::collection($bookings)->additional([
+            'meta' => [
+                'totalEstimatedCost' => round($totalEstimatedCost, 2)
+            ]
+        ]);
     }
 
     /**
@@ -46,7 +52,7 @@ class BookingsController extends Controller
     {
         $attributes = $request->all();
         // $attributes['reference_id'] = (int)(uniqid(mt_rand(1000, 9000), true));
-        $reference_id = str_pad(mt_rand(1,999999), 6, '0', STR_PAD_LEFT);
+        $reference_id = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
         $attributes['reference_id'] = $reference_id;
 
         $booking = Booking::create($attributes);
@@ -66,12 +72,13 @@ class BookingsController extends Controller
      */
     public function show(Booking $booking, Request $request)
     {
+        $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->reference_id));
+        $booking->qr_code = $base64String;
+
         if ($request->for == 'print') {
-            $base64String = "data:image/png;base64, " . base64_encode(QrCode::format('png')->size(100)->generate($booking->reference_id));
-            $booking->qr_code = $base64String;
             $booking->load([
                 'account' => function ($q) {
-                    $q->select('id', 'name', 'phone');
+                    $q->select('id', 'name', 'phone', 'trade_name');
                 },
             ]);
             return response()->json(['data' => $booking]);
@@ -202,7 +209,7 @@ class BookingsController extends Controller
 
         $attributes['purchase_amount'] = $purchaseAmount;
 
-        if($attributes['status'] == 'complete'){
+        if ($attributes['status'] == 'complete') {
             $attributes['delivered_date'] = date('Y-m-d');
         }
 

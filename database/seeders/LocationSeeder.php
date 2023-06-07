@@ -16,10 +16,10 @@ class LocationSeeder extends Seeder
     public function run()
     {
         Location::create([
-            'name' => 'Model Colony',
-            'address' => 'Model Colony, Malir',
-            'city' => 'Karachi',
-            'phone'=>'02131234567'
+            'name' => 'UK',
+            'address' => '127C Bawtry Rd',
+            'city' => 'Rotherham',
+            'phone'=> '01709 542255'
         ]);
     }
 }
