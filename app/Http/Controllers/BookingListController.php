@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BookingListResource;
 use App\Models\BookingList;
+use App\Models\BookingListDetails;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,11 +17,33 @@ class BookingListController extends Controller
      */
     public function index()
     {
-        $paginate  = request('paginate', 30);
 
+        // if (request('for') == 'sales') {
+        //     $bookings = Booking::query()->indexQuery()->completed()->paginate($paginate);
+        // } else {
+
+        //     $totalEstimatedCost = Booking::query()->indexQuery()->sum('estimated_cost');
+        //     $bookings = Booking::query()->indexQuery()->paginate($paginate);
+        // }
+
+
+        // return BookingResource::collection($bookings)->additional([
+        //     'meta' => [
+        //         'totalEstimatedCost' => round($totalEstimatedCost, 2)
+        //     ]
+        // ]);
+        $paginate  = request('paginate', 30);
+        $bookingLists = [];
+
+
+        $totalEstimatedCost = BookingListDetails::query()->indexQuery()->sum('estimated_cost');
         $bookingLists = BookingList::query()->indexQuery()->paginate($paginate);
 
-        return BookingListResource::collection($bookingLists);
+        return BookingListResource::collection($bookingLists)->additional([
+            'meta' => [
+                'totalEstimatedCost' => round($totalEstimatedCost, 2)
+            ]
+        ]);
     }
 
     /**
@@ -37,19 +60,19 @@ class BookingListController extends Controller
         $attributes['reference_id'] = $reference_id;
 
         $bookingListData = [
-            'reference_id' => $reference_id, 
-            'account_id' => $attributes['account_id'], 
+            'reference_id' => $reference_id,
+            'account_id' => $attributes['account_id'],
             'date' =>  $attributes['date']
         ];
 
         $booking = BookingList::create($bookingListData);
 
-        foreach($attributes['booking_item_details'] as $bookingItemDetail){
+        foreach ($attributes['booking_item_details'] as $bookingItemDetail) {
             unset($bookingItemDetail['id']);
             $reference_id = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
             $bookingItemDetail['reference_id'] =  $reference_id;
             // $bookingItemDetail['date'] =  $attributes['date'];
-            
+
             $booking->bookingListDetails()->create($bookingItemDetail);
         }
 
@@ -58,7 +81,6 @@ class BookingListController extends Controller
             'data'      =>  $booking,
             'status'    => 'success'
         ], Response::HTTP_CREATED);
-
     }
 
     /**
