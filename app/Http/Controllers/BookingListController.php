@@ -32,7 +32,10 @@ class BookingListController extends Controller
         //         'totalEstimatedCost' => round($totalEstimatedCost, 2)
         //     ]
         // ]);
-        $paginate  = request('paginate', 30);
+
+        
+
+        $paginate  = request('paginate',50);
         $bookingLists = [];
 
 

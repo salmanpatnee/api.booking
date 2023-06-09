@@ -19,11 +19,11 @@ class BookingItemDetailController extends Controller
         $search  = request('search', '');
         $bookingItems = [];
 
-        $totalEstimatedCost = BookingListDetails::query()->indexQuery()->sum('estimated_cost');
+        $totalEstimatedCost = BookingListDetails::indexQuery()->sum('estimated_cost');
 
         // $bookingItems = BookingListDetails::query()->indexQuery()->paginate($paginate);
 
-        $bookingItems = BookingListDetails::search($search)->paginate($paginate);
+        $bookingItems = BookingListDetails::indexQuery()->paginate($paginate);
         
         return BookingItemResource::collection($bookingItems)->additional([
             'meta' => [
