@@ -24,12 +24,12 @@ class BookingListDetails extends Model
     public function scopeIndexQuery($query)
     {
         $orderBy = request('sort_field', 'created_at');
-        if(!in_array($orderBy, ['reference_id', 'status', 'device_name', 'issue', 'customer', 'trader', 'employee', 'phone', 'email'])){
+        if (!in_array($orderBy, ['reference_id', 'status', 'device_name', 'issue', 'customer', 'trader', 'employee', 'phone', 'email'])) {
             $orderBy = 'created_at';
         }
 
         $sortOrder = request('sort_direction', 'desc');
-        if(!in_array($sortOrder, ['asc', 'desc'])){
+        if (!in_array($sortOrder, ['asc', 'desc'])) {
             $sortOrder = 'desc';
         }
 
@@ -42,23 +42,28 @@ class BookingListDetails extends Model
 
         $query->where(function ($query) use ($term, $filled) {
 
-            if(count($filled) > 0){
+            if (count($filled) > 0) {
 
-                foreach($filled as $column => $value) {
+                foreach ($filled as $column => $value) {
 
-                    if($column == 'reference_id' || $column == 'status'){
+                    if ($column == 'reference_id' || $column == 'status') {
                         $query->where($column, $value);
-                    
-                    } 
-                    else if($column == 'customer') {
+                    } else if ($column == 'customer') {
                         $query->WhereHas('bookingList.account', function ($query) use ($value) {
-                            $query->where('name', 'LIKE', '%'.$value.'%');
+                            $query->where('name', 'LIKE', '%' . $value . '%');
                         });
-                    }
-                    else {
-                        $query->where($column, 'LIKE', '%'.$value.'%');
+                    } else {
+                        $query->where($column, 'LIKE', '%' . $value . '%');
                     }
                 }
+            }
+
+            if (request()->filled('start_date')) {
+                $query->where('date', '>=', request('start_date'));
+            }
+
+            if (request()->filled('end_date')) {
+                $query->where('date', '<=', request('end_date'));
             }
 
             // if($request->filled('id')) {
@@ -79,44 +84,41 @@ class BookingListDetails extends Model
         // $request = request();
 
         // LIKE = %asdsad%
-        // $sortOrder = request('sortOrder', 'desc');
-        // $orderBy = request('orderBy', 'created_at');
         // $query->search($term, $filled);
 
         // if (!empty($request->id))
         //     $query->where('reference_id', $request->id)->orWhereHas('bookingList.account', function ($query) use ($request) {
         //         $query->where('name', 'like', $request->id)->orWhere('phone', 'like', $request->id);
         //     });
-        // if (!empty($request->start_date))
-        //     $query->where('date', '>=', $request->start_date);
-        // if (!empty($request->end_date))
-        //     $query->where('date', '<=', $request->end_date);
+
+
+
         // if (!empty($request->status))
         //     $query->where('status', $request->status);
-    
+
 
         $query->orderBy($orderBy, $sortOrder);
     }
 
     public function scopeSearch($query, $term)
     {
-        
+
         $term = "%$term%";
         $request = request();
 
         $query->where(function ($query) use ($term, $request) {
-            if($request->filled('reference_id')) {
+            if ($request->filled('reference_id')) {
                 $query->where('reference_id', request('id'));
             }
-            if($request->filled('status')) {
+            if ($request->filled('status')) {
                 $query->where('status', request('status'));
             }
-            if($request->filled('device_name')) {
+            if ($request->filled('device_name')) {
                 // $query->where('device_name', request('device_name'));
-                $query->where('device_name', 'like', "%".request('device_name')."%");
+                $query->where('device_name', 'like', "%" . request('device_name') . "%");
             }
-            if($request->filled('fault')) {
-                $query->where('issue', 'like', '%'.request('fault').'%');
+            if ($request->filled('fault')) {
+                $query->where('issue', 'like', '%' . request('fault') . '%');
             }
             // $query->when($request->has('id'), function($query) use ($request){
             //     $query->where('reference_id', '=', request('id'))

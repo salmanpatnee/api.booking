@@ -74,7 +74,7 @@ class BookingListController extends Controller
             unset($bookingItemDetail['id']);
             $reference_id = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
             $bookingItemDetail['reference_id'] =  $reference_id;
-            // $bookingItemDetail['date'] =  $attributes['date'];
+            $bookingItemDetail['date'] =  $attributes['date'];
 
             $booking->bookingListDetails()->create($bookingItemDetail);
         }

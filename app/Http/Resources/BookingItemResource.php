@@ -34,7 +34,7 @@ class BookingItemResource extends JsonResource
             'status' => $this->status, 
             'employee' => new EmployeeResource($this->whenNotNull($this->employee)), 
             'account' => new AccountResource($this->bookingList->account), 
-            'date' => $this->bookingList->date
+            'date' => $this->date
         ];
     }
 }
