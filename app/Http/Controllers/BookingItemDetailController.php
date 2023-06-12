@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\BookingItemResource;
+use App\Http\Resources\BookingListResource;
+use App\Models\BookingList;
 use App\Models\BookingListDetails;
 use Illuminate\Http\Request;
 
@@ -52,9 +54,14 @@ class BookingItemDetailController extends Controller
      * @param  \App\Models\BookingListDetails  $BookingListDetails
      * @return \Illuminate\Http\Response
      */
-    public function show(BookingListDetails $BookingListDetails)
+    public function show($id)
     {
-        //
+        $bookingItem = BookingListDetails::findOrFail($id);
+
+        $bookingList = BookingList::findOrFail($bookingItem->id);
+
+        return new BookingListResource($bookingList);
+        // return new BookingItemResource($BookingListDetails);
     }
 
     /**

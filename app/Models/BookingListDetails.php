@@ -24,7 +24,7 @@ class BookingListDetails extends Model
     public function scopeIndexQuery($query)
     {
         $orderBy = request('sort_field', 'created_at');
-        if (!in_array($orderBy, ['reference_id', 'status', 'device_name', 'issue', 'customer', 'trader', 'employee', 'phone', 'email'])) {
+        if (!in_array($orderBy, ['reference_id', 'status', 'device_name', 'issue', 'customer', 'trade_name', 'employee', 'phone', 'email'])) {
             $orderBy = 'created_at';
         }
 
@@ -34,7 +34,7 @@ class BookingListDetails extends Model
         }
 
         $filled = array_filter(request()->only([
-            'reference_id', 'status', 'device_name', 'issue', 'customer', 'trader', 'employee', 'phone', 'email', 'search'
+            'reference_id', 'status', 'device_name', 'issue', 'customer', 'trade_name', 'employee', 'phone', 'email', 'search'
         ]));
 
         $term = request('search', '');
@@ -48,11 +48,23 @@ class BookingListDetails extends Model
 
                     if ($column == 'reference_id' || $column == 'status') {
                         $query->where($column, $value);
-                    } else if ($column == 'customer') {
+                    } 
+                    else if ($column == 'customer') {
                         $query->WhereHas('bookingList.account', function ($query) use ($value) {
                             $query->where('name', 'LIKE', '%' . $value . '%');
                         });
-                    } else {
+                    }
+                    else if ($column == 'trade_name') {
+                        $query->WhereHas('bookingList.account', function ($query) use ($value, $column) {
+                            $query->where($column, 'LIKE', '%' . $value . '%');
+                        });
+                    }
+                    else if ($column == 'employee') {
+                        $query->WhereHas('employee', function ($query) use ($value, $column) {
+                            $query->where('name', 'LIKE', '%' . $value . '%');
+                        });
+                    } 
+                    else {
                         $query->where($column, 'LIKE', '%' . $value . '%');
                     }
                 }

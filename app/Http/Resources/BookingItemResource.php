@@ -33,7 +33,7 @@ class BookingItemResource extends JsonResource
             'purchase_amount' => $this->purchase_amount, 
             'status' => $this->status, 
             'employee' => new EmployeeResource($this->whenNotNull($this->employee)), 
-            'account' => new AccountResource($this->bookingList->account), 
+            'account' => new AccountResource($this->whenNotNull($this->account)), 
             'date' => $this->date
         ];
     }
