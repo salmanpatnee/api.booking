@@ -61,7 +61,6 @@ class BookingItemDetailController extends Controller
         $bookingList = BookingList::findOrFail($bookingItem->id);
 
         return new BookingListResource($bookingList);
-        // return new BookingItemResource($BookingListDetails);
     }
 
     /**
