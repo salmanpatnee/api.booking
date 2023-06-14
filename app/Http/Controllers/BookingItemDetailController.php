@@ -54,11 +54,13 @@ class BookingItemDetailController extends Controller
      * @param  \App\Models\BookingListDetails  $BookingListDetails
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(BookingListDetails $booking_item)
     {
-        $bookingItem = BookingListDetails::findOrFail($id);
+        if (request('for') == 'print') {
+            return new BookingItemResource($booking_item);
+        }
 
-        $bookingList = BookingList::findOrFail($bookingItem->id);
+        $bookingList = BookingList::findOrFail($booking_item->booking_list_id);
 
         return new BookingListResource($bookingList);
     }
@@ -84,5 +86,10 @@ class BookingItemDetailController extends Controller
     public function destroy(BookingListDetails $BookingListDetails)
     {
         //
+    }
+
+    public function sendMessage()
+    {
+            //
     }
 }

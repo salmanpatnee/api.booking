@@ -33,9 +33,9 @@ class BookingListController extends Controller
         //     ]
         // ]);
 
-        
 
-        $paginate  = request('paginate',50);
+
+        $paginate  = request('paginate', 50);
         $bookingLists = [];
 
 
@@ -104,9 +104,6 @@ class BookingListController extends Controller
                 },
             ]);
             return new BookingListResource($bookingList);
-            // return response()->json(['data' => $bookingList]);
-            // $booking->qr_code = "";
-            // return new BookingResource($booking);
         }
 
         return new BookingListResource($bookingList);
@@ -121,7 +118,49 @@ class BookingListController extends Controller
      */
     public function update(Request $request, BookingList $bookingList)
     {
-        //
+        $attributes = $request->all();
+
+        foreach ($attributes['booking_list_details'] as $bookingItemDetail) {
+
+            $bookingDetail = BookingListDetails::find($bookingItemDetail['id']);
+
+            $bookingDetail->update([
+                'employee_id' => $bookingItemDetail['employee_id'],
+                'device_name' => $bookingItemDetail['device_name'],
+                'imei' => $bookingItemDetail['imei'],
+                'device_type' => $bookingItemDetail['device_type'],
+                'device_make' => $bookingItemDetail['device_make'],
+                'device_model' => $bookingItemDetail['device_model'],
+                'issue' => $bookingItemDetail['issue'],
+                'issue_type' => $bookingItemDetail['issue_type'],
+                'estimated_delivery_date' => $bookingItemDetail['estimated_delivery_date'],
+                'delivered_date' => isset($bookingItemDetail['delivered_date']) ? $bookingItemDetail['delivered_date'] : null,
+                'serial_no' => $bookingItemDetail['serial_no'],
+                'customer_comments' => $bookingItemDetail['customer_comments'],
+                'notes' => $bookingItemDetail['notes'],
+                'estimated_cost' => $bookingItemDetail['estimated_cost'],
+                'charges' => $bookingItemDetail['charges'],
+                'status' => $bookingItemDetail['status'],
+            ]);
+
+            /*
+            unset($bookingItemDetail['id']);
+            unset($bookingItemDetail['account']);
+            if (isset($bookingItemDetail['employee'])) {
+                $bookingItemDetail['employee_id'] = $bookingItemDetail['employee']['id'];
+                unset($bookingItemDetail['employee']);
+            } else {
+                $bookingItemDetail['employee_id'] = null;
+            }
+
+            $bookingList->bookingListDetails()->update($bookingItemDetail);
+            */
+        }
+
+        return response()->json([
+            'message'   => 'Booking updated successfully.',
+            'status'    => 'success'
+        ], Response::HTTP_OK);
     }
 
     /**

@@ -32,6 +32,7 @@ class BookingItemResource extends JsonResource
             'charges' => $this->charges, 
             'purchase_amount' => $this->purchase_amount, 
             'status' => $this->status, 
+            'employee_id' => $this->employee ? $this->employee->id : "", 
             'employee' => new EmployeeResource($this->whenNotNull($this->employee)), 
             'account' => new AccountResource($this->whenNotNull($this->bookingList->account)), 
             'date' => $this->date
