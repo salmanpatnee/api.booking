@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BookingItemResource;
 use App\Http\Resources\BookingListResource;
+use App\Models\Account;
 use App\Models\BookingList;
 use App\Models\BookingListDetails;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class BookingItemDetailController extends Controller
 {
@@ -26,7 +28,7 @@ class BookingItemDetailController extends Controller
         // $bookingItems = BookingListDetails::query()->indexQuery()->paginate($paginate);
 
         $bookingItems = BookingListDetails::indexQuery()->paginate($paginate);
-        
+
         return BookingItemResource::collection($bookingItems)->additional([
             'meta' => [
                 'totalEstimatedCost' => round($totalEstimatedCost, 2)
@@ -90,6 +92,27 @@ class BookingItemDetailController extends Controller
 
     public function sendMessage()
     {
-            //
+        $attributes = request()->all();
+
+        $basic  = new \Vonage\Client\Credentials\Basic(env('VONAGE_KEY'), env('VONAGE_SECRET'));
+        $client = new \Vonage\Client($basic);
+
+        $response = $client->sms()->send(
+            new \Vonage\SMS\Message\SMS($attributes['phone'], "iCrack", $attributes['message'])
+        );
+
+        $message = $response->current();
+
+        if ($message->getStatus() == 0) {
+            return response()->json([
+                'message'   => 'Message sent.',
+                'status'    => 'success'
+            ], Response::HTTP_OK);
+        } else {
+            return response()->json([
+                'message'   => 'Message sending failed. ' . $message->getStatus(),
+                'status'    => 'error'
+            ], Response::HTTP_NOT_FOUND);
+        }
     }
 }
