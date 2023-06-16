@@ -128,6 +128,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('bookings', BookingsController::class);
     Route::apiResource('booking-list', BookingListController::class);
     Route::post('booking-items/send-message', [BookingItemDetailController::class, 'sendMessage']);
+    Route::patch('booking-items/{booking_item}/update-status', [BookingItemDetailController::class, 'updateStatus']);
+    Route::get('booking-items/export', [BookingItemDetailController::class, 'export']);
     Route::apiResource('booking-items', BookingItemDetailController::class);
 
     Route::apiResource('purchase-orders', PurchaseOrderController::class);

@@ -17,6 +17,7 @@ class BookingItemResource extends JsonResource
         return [
             'id' => $this->id, 
             'booking_list_id' => $this->bookingList->id, 
+            'booking_list_reference_id' => $this->bookingList->reference_id, 
             'reference_id' => $this->reference_id, 
             'device_name' => $this->device_name, 
             'imei' => $this->imei, 

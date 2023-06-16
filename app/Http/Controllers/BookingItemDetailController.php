@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BookingItemsExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Resources\BookingItemResource;
 use App\Http\Resources\BookingListResource;
 use App\Models\Account;
@@ -114,5 +116,28 @@ class BookingItemDetailController extends Controller
                 'status'    => 'error'
             ], Response::HTTP_NOT_FOUND);
         }
+    }
+
+    public function updateStatus(BookingListDetails $booking_item)
+    {
+
+        $attributes = request()->all();
+        
+        $booking_item->update([
+            'status' => $attributes['status'], 
+            'charges' => $attributes['charges'], 
+        ]);
+
+        return response()->json([
+            'message'   => 'Status updated.',
+            'status'    => 'success'
+        ], Response::HTTP_OK);
+        
+
+    }
+
+    public function export(Request $request)
+    {
+        return Excel::download(new BookingItemsExport($request), 'booking-items.xlsx');
     }
 }
