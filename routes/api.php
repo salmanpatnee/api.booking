@@ -30,6 +30,7 @@ use App\Http\Controllers\ImportOldDatabaseController;
 use App\Http\Controllers\ImportOldInventoryReportController;
 use App\Http\Controllers\ImportOldUomController;
 use App\Http\Controllers\ImportProductsDiscountController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LossReportController;
 use App\Http\Controllers\PaymentController;
@@ -84,7 +85,7 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 // Route::apiResource('booking-list', BookingListController::class);
 // Route::apiResource('booking-items', BookingItemDetailController::class);
-
+Route::apiResource('invoices', InvoiceController::class);
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('dashboard', DashboardController::class);
     Route::apiResource('locations', LocationController::class)->only('index', 'store', 'show', 'update');

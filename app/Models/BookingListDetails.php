@@ -11,6 +11,10 @@ class BookingListDetails extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'estimated_cost' => 'float',
+    ];
+
     public function bookingList()
     {
         return $this->belongsTo(BookingList::class, 'booking_list_id');

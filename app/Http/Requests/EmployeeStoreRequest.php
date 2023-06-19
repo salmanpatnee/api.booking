@@ -25,7 +25,7 @@ class EmployeeStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:employees,email',
+            'email' => 'nullable|email|max:255|unique:employees,email',
             'phone' => 'nullable|string|unique:employees,phone',
             'address' => 'nullable|string',
             'joining_date'  => 'nullable|date'
