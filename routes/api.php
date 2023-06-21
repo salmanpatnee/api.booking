@@ -51,6 +51,7 @@ use App\Http\Controllers\SaleCustomerController;
 use App\Http\Controllers\SaleOrderedController;
 use App\Http\Controllers\SaleShipmentController;
 use App\Http\Controllers\SalesReturnController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\StockTransferCanttController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplierLedgerController;
@@ -85,9 +86,12 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 
 // Route::apiResource('booking-list', BookingListController::class);
 // Route::apiResource('booking-items', BookingItemDetailController::class);
-Route::apiResource('invoices', InvoiceController::class);
+Route::get('settings', [SettingsController::class, 'index']);
+Route::patch('settings', [SettingsController::class, 'update']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('dashboard', DashboardController::class);
+    Route::apiResource('invoices', InvoiceController::class);
     Route::apiResource('locations', LocationController::class)->only('index', 'store', 'show', 'update');
 
     Route::apiResource('account-heads', AccountHeadController::class)->only('index', 'show');

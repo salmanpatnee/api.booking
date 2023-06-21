@@ -11,14 +11,14 @@ class Invoice extends Model
     use HasFactory;
 
     protected $fillable = [
-        'invoice_no', 
-        'client_name', 
-        'client_email', 
-        'description', 
-        'vat', 
-        'total', 
-        'net_total', 
-        'date', 
+        'invoice_no',
+        'client_name',
+        'client_email',
+        'description',
+        'vat',
+        'total',
+        'net_total',
+        'date',
     ];
 
     /**
@@ -36,8 +36,21 @@ class Invoice extends Model
     protected function total(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value / 100, 
-            set: fn ($value) => $value * 100, 
+            get: fn ($value) => $value / 100,
+            set: fn ($value) => $value * 100,
         );
+    }
+
+    public function scopeSearch($query, $term)
+    {
+        $invoieNo = $term;
+
+        $term = "%$term%";
+
+        $query->where(function ($query) use ($term, $invoieNo) {
+            $query->where('invoice_no', $invoieNo)
+                ->orWhere('client_name', 'like', $term)
+                ->orWhere('client_email', 'like', $term);
+        });
     }
 }

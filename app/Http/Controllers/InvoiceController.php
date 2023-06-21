@@ -14,9 +14,9 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $invoices = Invoice::orderBy('date')->paginate();
+        $invoices = Invoice::search($request->search)->orderBy('created_at', 'desc')->paginate();
         return InvoiceResource::collection($invoices);
     }
 
