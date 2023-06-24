@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Invoice extends Model
 {
@@ -13,9 +14,9 @@ class Invoice extends Model
     protected $fillable = [
         'invoice_no',
         'client_name',
-        'client_email',
-        'description',
-        'vat',
+        'phone',
+        'notes',
+        'tax_amount',
         'total',
         'net_total',
         'date',
@@ -27,11 +28,16 @@ class Invoice extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'vat' => 'float',
+        'tax_amount' => 'float',
         'total' => 'float',
         'net_total' => 'float',
         'date' => 'date',
     ];
+
+    public function invoiceItems(): HasMany
+    {
+        return $this->hasMany(InvoiceItems::class);
+    }
 
     protected function total(): Attribute
     {
@@ -50,7 +56,7 @@ class Invoice extends Model
         $query->where(function ($query) use ($term, $invoieNo) {
             $query->where('invoice_no', $invoieNo)
                 ->orWhere('client_name', 'like', $term)
-                ->orWhere('client_email', 'like', $term);
+                ->orWhere('phone', 'like', $term);
         });
     }
 }

@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->string('invoice_no')->unique();
             $table->string('client_name')->nullable();
-            $table->string('client_email')->nullable();
-            $table->text('description')->nullable();
-            $table->unsignedInteger('vat')->nullable();
+            $table->string('phone')->nullable();
+            $table->text('notes')->nullable();
+            $table->decimal('tax_amount')->nullable();
             $table->unsignedInteger('total');
             $table->unsignedInteger('net_total');
             $table->date('date');
