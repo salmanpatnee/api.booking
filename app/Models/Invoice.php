@@ -39,13 +39,13 @@ class Invoice extends Model
         return $this->hasMany(InvoiceItems::class);
     }
 
-    protected function total(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => $value / 100,
-            set: fn ($value) => $value * 100,
-        );
-    }
+    // protected function total(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn ($value) => $value / 100,
+    //         set: fn ($value) => $value * 100,
+    //     );
+    // }
 
     public function scopeSearch($query, $term)
     {

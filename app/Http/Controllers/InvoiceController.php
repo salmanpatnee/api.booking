@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
 class InvoiceController extends Controller
@@ -29,18 +30,36 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $attributes = $request->all();
+        $invoice = [];
 
         if(!isset($attributes['invoice_no'])){
             $attributes['invoice_no'] = str_pad(mt_rand(1, 999999), 6, '0', STR_PAD_LEFT);
         } 
 
-        $invoice = Invoice::create($attributes);
+        // DB::transaction(function () use ($attributes, $invoice){
+            $invoice = Invoice::create($attributes);
 
-        return response()->json([
-            'message'   => 'Invoice generated successfully.',
-            'data'      =>  new InvoiceResource($invoice),
-            'status'    => 'success'
-        ], Response::HTTP_CREATED);
+            foreach($attributes['invoice_item_details'] as $invoice_item){
+
+                $invoice->invoiceItems()->create([
+                    'item' => $invoice_item['item'], 
+                    'amount' => $invoice_item['amount'], 
+                    'qty' => $invoice_item['qty'], 
+                    'vat' => $invoice_item['vat'], 
+                    'sub_total' => $invoice_item['sub_total'], 
+                    'net_total' => $invoice_item['net_total'], 
+                ]);
+            }
+
+            return response()->json([
+                'message'   => 'Invoice generated successfully.',
+                'data' => $invoice,
+                'status'    => 'success'
+            ], Response::HTTP_CREATED);
+            
+        // });
+        
+        
     }
 
     /**

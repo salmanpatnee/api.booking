@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('item');
             $table->decimal('amount');
             $table->unsignedInteger('qty')->default(1);
-            $table->decimal('vat')->default(0);
+            $table->decimal('vat')->nullable();
             $table->decimal('sub_total');
             $table->decimal('net_total');
             $table->timestamps();

@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class InvoiceItems extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
+
+    protected $casts = [
+        'vat' => 'integer',
+    ];
 }
