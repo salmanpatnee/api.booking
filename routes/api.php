@@ -33,6 +33,7 @@ use App\Http\Controllers\ImportProductsDiscountController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LossReportController;
+use App\Http\Controllers\PartsController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
@@ -89,6 +90,8 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::get('settings', [SettingsController::class, 'index']);
 Route::patch('settings', [SettingsController::class, 'update']);
 
+// Route::apiResource('parts', PartsController::class);
+
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('dashboard', DashboardController::class);
     Route::apiResource('invoices', InvoiceController::class);
@@ -113,6 +116,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('products/fix-quantity', [ProductController::class, 'fixQuantity']);
     Route::get('products/fix-purchase-price', FixPurchasePriceController::class);
     Route::apiResource('products', ProductController::class);
+    Route::apiResource('parts', PartsController::class);
 
     Route::get('purchases/import', [PurchaseController::class, 'import']);
     Route::put('purchases/{purchase}/update-supplier', PurchaseUpdateSupplierController::class);
