@@ -116,6 +116,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('products/fix-quantity', [ProductController::class, 'fixQuantity']);
     Route::get('products/fix-purchase-price', FixPurchasePriceController::class);
     Route::apiResource('products', ProductController::class);
+    Route::patch('parts/{part}/update-stock', [PartsController::class, 'updateStock']);
     Route::apiResource('parts', PartsController::class);
 
     Route::get('purchases/import', [PurchaseController::class, 'import']);

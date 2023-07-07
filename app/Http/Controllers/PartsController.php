@@ -77,7 +77,7 @@ class PartsController extends Controller
 
         return (new PartResource($part))
             ->additional([
-                'message' => 'part updated successfully.',
+                'message' => 'Part updated successfully.',
                 'status' => 'success'
             ])->response()
             ->setStatusCode(Response::HTTP_OK);
@@ -97,5 +97,21 @@ class PartsController extends Controller
             'message' => 'Part deleted successfully.',
             'status'  => 'success'
         ], Response::HTTP_OK);
+    }
+
+    public function updateStock(Request $request, Part $part)
+    {
+        $attributes = $request->all();
+
+        $part->update([
+            'quantity' => $attributes['quantity']
+        ]);
+
+        return (new PartResource($part))
+            ->additional([
+                'message' => 'Stock updated successfully.',
+                'status' => 'success'
+            ])->response()
+            ->setStatusCode(Response::HTTP_OK);
     }
 }
