@@ -30,4 +30,9 @@ class Part extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function bookingItemParts()
+    {
+        return $this->hasMany(BookingItemPart::class);
+    }
 }

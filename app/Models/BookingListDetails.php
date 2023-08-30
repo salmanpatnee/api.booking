@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class BookingListDetails extends Model
 {
@@ -19,6 +20,12 @@ class BookingListDetails extends Model
     {
         return $this->belongsTo(BookingList::class, 'booking_list_id');
     }
+
+    public function bookingItemParts()
+    {
+        return $this->hasMany(BookingItemPart::class);
+    }
+
 
     public function employee()
     {
@@ -52,10 +59,21 @@ class BookingListDetails extends Model
 
                     if ($column == 'reference_id' || $column == 'status') {
                         $query->where($column, $value);
-                    } 
+                    }
+                     
                     else if ($column == 'customer') {
                         $query->WhereHas('bookingList.account', function ($query) use ($value) {
                             $query->where('name', 'LIKE', '%' . $value . '%');
+                        });
+                    }
+                    else if ($column == 'phone') {
+                        $query->WhereHas('bookingList.account', function ($query) use ($value) {
+                            $query->where('phone', $value);
+                        });
+                    }
+                    else if ($column == 'email') {
+                        $query->WhereHas('bookingList.account', function ($query) use ($value) {
+                            $query->where('email', $value);
                         });
                     }
                     else if ($column == 'trade_name') {

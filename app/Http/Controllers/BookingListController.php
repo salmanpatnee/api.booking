@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\BookingListResource;
+use App\Models\BookingItemPart;
 use App\Models\BookingList;
 use App\Models\BookingListDetails;
+use App\Models\Part;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -124,38 +127,70 @@ class BookingListController extends Controller
 
             $bookingDetail = BookingListDetails::find($bookingItemDetail['id']);
 
-            $bookingDetail->update([
-                'employee_id' => $bookingItemDetail['employee_id'],
-                'device_name' => $bookingItemDetail['device_name'],
-                'imei' => $bookingItemDetail['imei'],
-                'device_type' => $bookingItemDetail['device_type'],
-                'device_make' => $bookingItemDetail['device_make'],
-                'device_model' => $bookingItemDetail['device_model'],
-                'issue' => $bookingItemDetail['issue'],
-                'issue_type' => $bookingItemDetail['issue_type'],
-                'estimated_delivery_date' => $bookingItemDetail['estimated_delivery_date'],
-                'delivered_date' => isset($bookingItemDetail['delivered_date']) ? $bookingItemDetail['delivered_date'] : null,
-                'serial_no' => $bookingItemDetail['serial_no'],
-                'customer_comments' => $bookingItemDetail['customer_comments'],
-                'notes' => $bookingItemDetail['notes'],
-                'estimated_cost' => $bookingItemDetail['estimated_cost'],
-                'charges' => $bookingItemDetail['charges'],
-                'status' => $bookingItemDetail['status'],
-            ]);
+            // Get all the booking item parts through a relationship.
+            $bookingItemParts = $bookingDetail->bookingItemParts;
 
-            /*
-            unset($bookingItemDetail['id']);
-            unset($bookingItemDetail['account']);
-            if (isset($bookingItemDetail['employee'])) {
-                $bookingItemDetail['employee_id'] = $bookingItemDetail['employee']['id'];
-                unset($bookingItemDetail['employee']);
-            } else {
-                $bookingItemDetail['employee_id'] = null;
+            // Compare existing booking item parts with request. 
+            if (count($bookingItemDetail['parts'])) {
+                $targetProperty = 'part_id';
+                $desiredString = null;
+
+                foreach ($bookingItemDetail['parts'] as $part) {
+                    $desiredString =  $part['part_id'];
+                    $exists = $bookingItemParts->contains(function ($item) use ($targetProperty, $desiredString) {
+
+                        return $item->{$targetProperty} === $desiredString;
+                    });
+
+                    // Check if part already exist then update it otherwise insert it.
+
+                    if (!$exists) {
+
+                        $bookingDetail->bookingItemParts()->create(
+                            [
+                                'part_id' => $part['part_id'],
+                                'quantity' => $part['quantity'],
+                                'cost' => $part['cost'],
+                                'price' => $part['price'],
+                                'total' => ($part['price'] * $part['quantity'])
+                            ]
+                        );
+
+                        // Reduce stock
+                        $product = Part::find($part['part_id']);
+
+                        $product->update([
+                            'quantity' => $product->quantity - $part['quantity']
+                        ]);
+
+                    } else {
+                        //Update
+                    }
+                }
             }
 
-            $bookingList->bookingListDetails()->update($bookingItemDetail);
-            */
+            $bookingDetail->update([
+                'employee_id'               => $bookingItemDetail['employee_id'],
+                'device_name'               => $bookingItemDetail['device_name'],
+                'imei'                      => $bookingItemDetail['imei'],
+                'device_type'               => $bookingItemDetail['device_type'],
+                'device_make'               => $bookingItemDetail['device_make'],
+                'device_model'              => $bookingItemDetail['device_model'],
+                'issue'                     => $bookingItemDetail['issue'],
+                'issue_type'                => $bookingItemDetail['issue_type'],
+                'estimated_delivery_date'   => $bookingItemDetail['estimated_delivery_date'],
+                'delivered_date'            => isset($bookingItemDetail['delivered_date']) ? $bookingItemDetail['delivered_date'] : null,
+                'serial_no'                 => $bookingItemDetail['serial_no'],
+                'customer_comments'         => $bookingItemDetail['customer_comments'],
+                'notes'                     => $bookingItemDetail['notes'],
+                'estimated_cost'            => $bookingItemDetail['estimated_cost'],
+                'charges'                   => $bookingItemDetail['charges'],
+                'status'                    => $bookingItemDetail['status'],
+            ]);
         }
+
+
+
 
         return response()->json([
             'message'   => 'Booking updated successfully.',

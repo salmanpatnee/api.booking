@@ -37,7 +37,8 @@ class BookingItemResource extends JsonResource
             'employee_id' => $this->employee ? $this->employee->id : "", 
             'employee' => new EmployeeResource($this->whenNotNull($this->employee)), 
             'account' => new AccountResource($this->whenNotNull($this->bookingList->account)), 
-            'date' => $this->date
+            'date' => $this->date, 
+            'parts' => $this->bookingItemParts ? BookingItemPartResource::collection($this->bookingItemParts) : []
         ];
     }
 }
